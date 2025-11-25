@@ -16,20 +16,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Skip composer validate if composer.json doesn't exist
       - name: Validate composer.json (if exists)
         run: |
           if [ -f composer.json ]; then
             composer validate --strict
           else
-            echo "composer.json not found — skipping validation."
+            echo "Skipping composer validation (file not found)"
           fi
 
-      # Skip install if no composer.json file
       - name: Install dependencies (if composer.json exists)
         run: |
           if [ -f composer.json ]; then
             composer install --prefer-dist --no-progress
           else
-            echo "composer.json not found — skipping composer install."
+            echo "Skipping composer install (file not found)"
           fi
