@@ -22,7 +22,7 @@
                         <th>Username</th>
                         <th>Password</th>
                         <th>Contact</th>
-                        <th>Specialization</th>
+               
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -39,7 +39,7 @@ while($row = $doctor->fetch_assoc()){
         <td><?= htmlspecialchars($row['username']) ?></td>
             <td><?= htmlspecialchars($row['password']) ?></td>
         <td><?= htmlspecialchars($row['contact_number']) ?></td>
-        <td><?= htmlspecialchars($row['specialization']) ?></td>
+
         <td>
             <!-- Future action buttons can be added here -->
             <button class="btn btn-sm btn-secondary btn-edit">Edit</button>
@@ -67,7 +67,7 @@ while($row = $doctor->fetch_assoc()){
           </div>
           <div class="modal-body">
                  <input type="hidden" name="role" class="form-control" value="doctor" required>
-                <input type="text" name="user_id" class="form-control" >
+                <input type="hidden" name="user_id" class="form-control" >
 
               <div class="mb-3">
                   <label class="form-label">First Name</label>
@@ -89,10 +89,10 @@ while($row = $doctor->fetch_assoc()){
                   <label class="form-label">Contact Number</label>
                   <input type="text" name="contact_number" class="form-control" required>
               </div>
-              <div class="mb-3">
+              <!-- <div class="mb-3">
                   <label class="form-label">Specialization</label>
-                  <input type="text" name="specialization" class="form-control" required>
-              </div>
+                  <input type="text" name="specialization" class="form-control" value="-" >
+              </div> -->
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
