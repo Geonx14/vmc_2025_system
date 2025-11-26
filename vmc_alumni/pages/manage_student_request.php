@@ -60,7 +60,7 @@ include 'connection.php';
 
 <body>
 <div class="content-box">
-    <h3 class="fw-bold text-primary mb-4">Manage Student Graduation Requests</h3>
+    <h3 class="fw-bold text-primary mb-4">Manage Student Pictorial Requests</h3>
     <div class="filter-box row g-3">
         <div class="col-md-3">
             <label class="fw-semibold">Filter by Status</label>

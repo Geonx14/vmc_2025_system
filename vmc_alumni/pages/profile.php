@@ -62,7 +62,7 @@ label {
 </style>
 
 <div class="content-box">
-    <h3 class="fw-bold text-primary mb-4">Manage Alumni Information</h3>
+    <h3 class="fw-bold text-primary mb-4">Manage <?=  ucfirst($_SESSION['role'])?> Information</h3>
 
     <!-- Personal Info -->
     <div class="mb-4">
