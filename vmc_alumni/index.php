@@ -206,7 +206,7 @@ body {
             </div>
 <?php endif; ?>
             <a class="nav-link mt-2" href="?page=profile">
-                <i class="bi bi-gear"></i> Profile
+                <i class="bi bi-person"></i> Profile
             </a>
 
         </nav>

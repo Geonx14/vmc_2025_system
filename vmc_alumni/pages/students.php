@@ -294,7 +294,7 @@ $(".btnDelete").on("click", function(){
             type: 'POST',
             data: { delete_id: delete_id },
             success: function(response){
-            alert(response)
+          
                 alert('Student deleted successfully!');
                 location.reload(); // Reload the page to see changes
             },
