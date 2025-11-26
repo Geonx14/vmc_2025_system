@@ -94,8 +94,14 @@ body {
 
         <select id="filterType">
             <option value="">All Contribution Types</option>
-            <option value="Monetary">Monetary</option>
-            <option value="In-Kind">In-Kind</option>
+      <?php
+      $contribution_list  = $conn->query("SELECT contribution_type FROM `alumni_contributions` group by contribution_type ");
+      while($row = $contribution_list->fetch_assoc()){
+        ?>
+         <option value="<?=  $row['contribution_type'] ?>"><?=  $row['contribution_type'] ?></option>
+        <?php
+      }
+      ?>
         </select>
 
         <button id="btnFilter" class="btn btn-add">Filter</button>
