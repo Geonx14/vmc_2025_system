@@ -79,17 +79,64 @@ body {
     <div class="filter-group">
         <select id="filterYear">
             <option value="">All Years</option>
-            <option value="2025">2025</option>
-            <option value="2024">2024</option>
-            <option value="2023">2023</option>
+          <?php
+        $startYear = 1970;
+        $endYear = 2025;
+
+        for ($year = $startYear; $year <= $endYear; $year++) {
+            echo "<option value=\"$year\">$year</option>";
+        }
+    ?>
         </select>
 
-        <select id="filterCourse">
+      <select id="filterCourse" class="filter-course">
             <option value="">All Courses</option>
-            <option value="BSIT">BSIT</option>
-            <option value="BSCS">BSCS</option>
-            <option value="BSA">BSA</option>
-            <option value="BSTM">BSTM</option>
+          
+                                <optgroup label="Information Technology & Computing">
+                                    <option value="BSIT">BS Information Technology (BSIT)</option>
+                                    <option value="BSCS">BS Computer Science (BSCS)</option>
+                                    <option value="BSCpE">BS Computer Engineering (BSCpE)</option>
+                                    <option value="BSIS">BS Information Systems (BSIS)</option>
+                                </optgroup>
+
+                                <optgroup label="Business & Management">
+                                    <option value="BSBA">BS Business Administration (BSBA)</option>
+                                    <option value="BSA">BS Accountancy (BSA)</option>
+                                    <option value="BSMA">BS Management Accounting (BSMA)</option>
+                                    <option value="BSTM">BS Tourism Management (BSTM)</option>
+                                    <option value="BHM">BS Hospitality Management (BHM)</option>
+                                </optgroup>
+
+                                <optgroup label="Education">
+                                    <option value="BEEd">Bachelor of Elementary Education (BEEd)</option>
+                                    <option value="BSEd-English">BSEd Major in English</option>
+                                    <option value="BSEd-Math">BSEd Major in Mathematics</option>
+                                    <option value="BPEd">Bachelor of Physical Education (BPEd)</option>
+                                </optgroup>
+
+                                <optgroup label="Engineering">
+                                    <option value="BSCE">BS Civil Engineering (BSCE)</option>
+                                    <option value="BSEE">BS Electrical Engineering (BSEE)</option>
+                                    <option value="BSME">BS Mechanical Engineering (BSME)</option>
+                                    <option value="BSECE">BS Electronics Engineering (BSECE)</option>
+                                </optgroup>
+
+                                <optgroup label="Health & Allied Programs">
+                                    <option value="BSN">BS Nursing (BSN)</option>
+                                    <option value="BSP">BS Pharmacy (BSP)</option>
+                                    <option value="BSMT">BS Medical Technology (BSMT)</option>
+                                    <option value="BSPsych">BS Psychology (BS Psych)</option>
+                                </optgroup>
+
+                                <optgroup label="Public Safety">
+                                    <option value="BSCrim">BS Criminology (BSCrim)</option>
+                                </optgroup>
+
+                                <optgroup label="Arts & Sciences">
+                                    <option value="BSPA">BS Public Administration</option>
+                                    <option value="ABComm">AB Communication</option>
+                                    <option value="ABPolSci">AB Political Science</option>
+                                </optgroup>
         </select>
 
         <select id="filterType">
@@ -185,27 +232,19 @@ body {
 </div>
 
 <script>
-// Filter functionality
-document.getElementById("btnFilter").onclick = () => {
-    let year = document.getElementById("filterYear").value;
-    let course = document.getElementById("filterCourse").value;
-    let type = document.getElementById("filterType").value;
+var table = $(".table").DataTable({
+            responsive: true,
+        pageLength: 10,
+        lengthChange: false
+})
 
-    let total = 0;
-
-    document.querySelectorAll("#contributionTable tbody tr").forEach(row => {
-        let matchYear = year === "" || row.dataset.year === year;
-        let matchCourse = course === "" || row.dataset.course === course;
-        let matchType = type === "" || row.dataset.type === type;
-
-        let visible = matchYear && matchCourse && matchType;
-        row.style.display = visible ? "" : "none";
-
-        if (visible && row.dataset.type === "Monetary") {
-            total += parseFloat(row.children[5].textContent.replace(/\$/,''));
-        }
-    });
-
-    document.getElementById("totalSummary").textContent = `Total Contributions: $${total}`;
-};
+    $("#filterCourse").change(function(){
+  table.column(3).search(this.value).draw();
+    })
+        $("#filterYear").change(function(){
+  table.column(4).search(this.value).draw();
+    })
+$("#filterType").change(function(){
+  table.column(5).search(this.value).draw();
+})
 </script>
