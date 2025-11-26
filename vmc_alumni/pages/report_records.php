@@ -149,7 +149,7 @@ input.search-box, select.filter-course {
     });
 
     $("#filterCourse").change(function(){
-  table.column(6).search(this.value).draw();
+  table.column(4).search(this.value).draw();
     })
 // Search function
 document.getElementById("searchAlumni").addEventListener("keyup", function(){
