@@ -104,7 +104,7 @@ body {
       ?>
         </select>
 
-        <button id="btnFilter" class="btn btn-add">Filter</button>
+       
     </div>
 
     <!-- Contributions Table -->
