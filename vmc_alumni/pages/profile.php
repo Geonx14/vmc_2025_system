@@ -2,7 +2,7 @@
 include 'connection.php';
 $id = $_SESSION['user_id'];
 // Fetch user info
-$alumni_info = $conn->query("SELECT * FROM users WHERE user_id='$id'")->fetch_assoc();
+$alumni_info = $conn->query("SELECT * FROM users u left join st_course st on u.user_id=st.student_id WHERE user_id='$id'")->fetch_assoc();
 ?>
 
 <style>
@@ -69,12 +69,22 @@ label {
         <h5 class="section-title">Personal Information</h5>
         <div class="row g-3 mt-2 text-center mb-3">
             <div class="col-md-12">
-                <img src="../query/uploads/avatars/<?= $alumni_info['avatar'] ?>" 
-                     style="width:120px; height:120px; border-radius:50%; object-fit:cover;">
+              
+                <img src="<?= "query/uploads/avatars/".$alumni_info['avatar'] ?>" style="height: 200px; width: 200px; border-radius: 100px;" alt="">
             </div>
         </div>
-
+        <?php
+        if($_SESSION['role']=='student' ||$_SESSION['role']=='alumni' ):
+        ?>
+<div class="row">
+     <div class="col-md-4">
+                <label>Course</label>
+                <input type="text" class="form-control" value="<?= $alumni_info['course'] ?>" readonly>
+            </div>
+</div>
+<?php endif;?>
         <div class="row g-3 mt-2">
+            
             <div class="col-md-4">
                 <label>First Name</label>
                 <input type="text" class="form-control" value="<?= $alumni_info['firstname'] ?>" readonly>
@@ -111,22 +121,20 @@ label {
             </div>
         </div>
 
-        <!-- Update Profile Button for Student & Staff -->
-        <?php if(in_array($_SESSION['role'], ['student','staff'])): ?>
-        <div class="text-end mt-4">
+<div class="text-end mt-4">
             <button class="btn btn-update" data-bs-toggle="modal" data-bs-target="#updateProfileModal">
                 <i class="bi bi-pencil-square"></i> Update Profile
             </button>
         </div>
-        <?php endif; ?>
     </div>
 </div>
 
 <!-- UPDATE PROFILE MODAL -->
 <div class="modal fade" id="updateProfileModal">
     <div class="modal-dialog modal-lg">
-        <form action="query/update_profile.php" method="POST" class="modal-content">
+        <form id="frm_update" class="modal-content">
             <input type="hidden" name="user_id" value="<?= $id ?>">
+            <input type="hidden" name="user_type" value="<?= $_SESSION['role'] ?>">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title">Update Profile</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -146,24 +154,96 @@ label {
                         <input type="text" name="lastname" class="form-control" value="<?= $alumni_info['lastname'] ?>" required>
                     </div>
                 </div>
-
-                <div class="row mb-3">
+                    <div class="row mb-3">
                     <div class="col-md-6">
-                        <label class="form-label">Username</label>
-                        <input type="text" name="username" class="form-control" value="<?= $alumni_info['username'] ?>" required>
+                        <label class="form-label">Birthday</label>
+                        <input type="date" name="birthday" class="form-control" value="<?= $alumni_info['birthday'] ?>" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Contact Number</label>
                         <input type="text" name="mobile" class="form-control" value="<?= $alumni_info['mobile'] ?>" required>
                     </div>
                 </div>
+                <?php
+
+                $is_disabled = "";
+                   if($_SESSION['role']=='admin' || $_SESSION['role']=='staff' ){
+     $is_disabled = "disabled";
+                   }
+    
+                ?>
 
                 <div class="row mb-3">
+                  <div class="col-md-6">
+                            <label>Course</label>
+                            <select id="course"  <?= $is_disabled  ?> name="course" class="form-control">
+                                  <option value="<?=  isset($alumni_info['course'])?$alumni_info['course']:"" ?>"><?=  isset($alumni_info['course'])?$alumni_info['course']:"" ?></option>
+                                <option value="" disabled>Select Course</option>
+                                <optgroup label="Information Technology & Computing">
+                                    <option value="BSIT">BS Information Technology (BSIT)</option>
+                                    <option value="BSCS">BS Computer Science (BSCS)</option>
+                                    <option value="BSCpE">BS Computer Engineering (BSCpE)</option>
+                                    <option value="BSIS">BS Information Systems (BSIS)</option>
+                                </optgroup>
+
+                                <optgroup label="Business & Management">
+                                    <option value="BSBA">BS Business Administration (BSBA)</option>
+                                    <option value="BSA">BS Accountancy (BSA)</option>
+                                    <option value="BSMA">BS Management Accounting (BSMA)</option>
+                                    <option value="BSTM">BS Tourism Management (BSTM)</option>
+                                    <option value="BHM">BS Hospitality Management (BHM)</option>
+                                </optgroup>
+
+                                <optgroup label="Education">
+                                    <option value="BEEd">Bachelor of Elementary Education (BEEd)</option>
+                                    <option value="BSEd-English">BSEd Major in English</option>
+                                    <option value="BSEd-Math">BSEd Major in Mathematics</option>
+                                    <option value="BPEd">Bachelor of Physical Education (BPEd)</option>
+                                </optgroup>
+
+                                <optgroup label="Engineering">
+                                    <option value="BSCE">BS Civil Engineering (BSCE)</option>
+                                    <option value="BSEE">BS Electrical Engineering (BSEE)</option>
+                                    <option value="BSME">BS Mechanical Engineering (BSME)</option>
+                                    <option value="BSECE">BS Electronics Engineering (BSECE)</option>
+                                </optgroup>
+
+                                <optgroup label="Health & Allied Programs">
+                                    <option value="BSN">BS Nursing (BSN)</option>
+                                    <option value="BSP">BS Pharmacy (BSP)</option>
+                                    <option value="BSMT">BS Medical Technology (BSMT)</option>
+                                    <option value="BSPsych">BS Psychology (BS Psych)</option>
+                                </optgroup>
+
+                                <optgroup label="Public Safety">
+                                    <option value="BSCrim">BS Criminology (BSCrim)</option>
+                                </optgroup>
+
+                                <optgroup label="Arts & Sciences">
+                                    <option value="BSPA">BS Public Administration</option>
+                                    <option value="ABComm">AB Communication</option>
+                                    <option value="ABPolSci">AB Political Science</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Avatar</label>
+                            <input type="file" id="avatar" name="avatar" class="form-control">
+                        </div>
+                        </div>
+                <div class="row mb-3">
                     <div class="col-md-6">
-                        <label class="form-label">Birthday</label>
-                        <input type="date" name="birthday" class="form-control" value="<?= $alumni_info['birthday'] ?>" required>
+                        <label class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control" value="<?= $alumni_info['username'] ?>" required>
                     </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Password</label>
+                        <input type="text" name="password" class="form-control" value="<?= $alumni_info['username'] ?>" required>
+                    </div>                    
                 </div>
+
+              
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -172,3 +252,23 @@ label {
         </form>
     </div>
 </div>
+<script>
+$("#frm_update").on("submit", function(e){
+    e.preventDefault();
+
+ $.ajax({
+    url: 'query/save_user.php',
+    type: 'POST',
+    data: new FormData(this),
+    contentType: false,
+    processData: false,
+    success: function(response){        
+        alert('Profile saved successfully!'+response);
+        location.reload(); // Reload the page to see changes
+    },
+ })
+
+    // Hide modal properly
+
+});
+</script>

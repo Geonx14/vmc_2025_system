@@ -148,7 +148,7 @@ body {
 <?php endif; ?>
             <?php if($_SESSION['role']=='alumni' ): ?>
             <a class="nav-link <?= $page=='manage_alumni_info' ? 'active' : '' ?>" href="?page=manage_alumni_info">
-                <i class="bi bi-journal-text"></i> Manage Alumni Info
+                <i class="bi bi-journal-text"></i> Manage Alumni Career
             </a>
 <?php endif; ?>
 <?php if($_SESSION['role'] == 'student'): ?>
@@ -177,7 +177,7 @@ body {
                         <i class="bi bi-file-earmark-bar-graph"></i> Reports
                     </button>
                 </h2>
-                <div id="reportsMenu" class="accordion-collapse collapse <?= in_array($page,['report_records','report_career','report_participation','report_contribution']) ? 'show' : '' ?>">
+                <div id="reportsMenu" class="accordion-collapse collapse <?= in_array($page,['report_records','report_career','report_participation','report_contribution','report_student']) ? 'show' : '' ?>">
                     <div class="accordion-body py-2 px-3">
                         <a class="nav-link  <?= $page=='report_records' ? 'active' : '' ?>" href="?page=report_records"><i class="bi bi-list-ul"></i> List of Alumni Records</a>
                         <a class="nav-link <?= $page=='report_career' ? 'active' : '' ?>" href="?page=report_career"><i class="bi bi-bar-chart-line"></i> Career & Achievement Reports</a>
@@ -191,11 +191,11 @@ body {
                                         <i class="bi bi-person-lines-fill"></i> Student Details
                                     </button>
                                 </h2>
-                                <div id="studentDetailsMenu" class="accordion-collapse collapse">
+                                <div id="studentDetailsMenu" class="accordion-collapse collapse <?= in_array($page,['report_student']) ? 'show' : '' ?>">
                                     <div class="accordion-body py-2 px-3">
-                                        <a class="nav-link" href="#"><i class="bi bi-book"></i> Courses</a>
-                                        <a class="nav-link" href="#"><i class="bi bi-check-circle"></i> Approved Requests</a>
-                                        <a class="nav-link" href="#"><i class="bi bi-x-circle"></i> Rejected Requests</a>
+                                        <a class="nav-link <?= $page=='report_student' ? 'active' : '' ?>" href="?page=report_student"><i class="bi bi-book"></i> Courses</a>
+                                        <a class="nav-link  <?= $page=='report_student_request' ? 'active' : '' ?>" href="?page=report_student_request"><i class="bi bi-book"></i> Pictorial Requests</a>
+                         
                                     </div>
                                 </div>
                             </div>
@@ -206,7 +206,7 @@ body {
             </div>
 <?php endif; ?>
             <a class="nav-link mt-2" href="?page=profile">
-                <i class="bi bi-gear"></i> Settings
+                <i class="bi bi-gear"></i> Profile
             </a>
 
         </nav>

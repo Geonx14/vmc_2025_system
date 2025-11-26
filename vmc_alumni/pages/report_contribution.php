@@ -1,3 +1,6 @@
+<?php
+include 'connection.php';
+?>
 <style>
 body {
     background: #f5f6fa;
@@ -37,6 +40,36 @@ body {
     font-weight: 600;
     color: #1a73e8;
 }
+.contribution-list {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+    .contribution-list li {
+        padding: 6px 0;
+        border-bottom: 1px solid #f1f1f1;
+        font-size: 0.95rem;
+    }
+
+    .contrib-date {
+        font-weight: bold;
+        color: #555;
+    }
+
+    .contrib-type {
+        margin-left: 5px;
+        margin-right: 5px;
+        font-size: 0.85rem;
+    }
+
+    .contribution-list li:last-child {
+        border-bottom: none;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f9f9f9;
+    }
 </style>
 
 <div class="content-box">
@@ -70,48 +103,73 @@ body {
 
     <!-- Contributions Table -->
     <div class="table-responsive">
-        <table class="table table-hover table-bordered align-middle" id="contributionTable">
-            <thead class="table-light">
-                <tr>
-                    <th>#</th>
-                    <th>Alumni Name</th>
-                    <th>Course</th>
-                    <th>Year Graduated</th>
-                    <th>Contribution Type</th>
-                    <th>Amount / Description</th>
-                    <th>Date Contributed</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr data-year="2025" data-course="BSIT" data-type="Monetary">
-                    <td>1</td>
-                    <td>Juan Santos Cruz</td>
-                    <td>BSIT</td>
-                    <td>2025</td>
-                    <td>Monetary</td>
-                    <td>$500</td>
-                    <td>2025-11-01</td>
-                </tr>
-                <tr data-year="2024" data-course="BSCS" data-type="In-Kind">
-                    <td>2</td>
-                    <td>Maria Lopez</td>
-                    <td>BSCS</td>
-                    <td>2024</td>
-                    <td>In-Kind</td>
-                    <td>Books Donation</td>
-                    <td>2024-10-15</td>
-                </tr>
-                <tr data-year="2023" data-course="BSA" data-type="Monetary">
-                    <td>3</td>
-                    <td>Carlos Dela Cruz</td>
-                    <td>BSA</td>
-                    <td>2023</td>
-                    <td>Monetary</td>
-                    <td>$1000</td>
-                    <td>2023-09-20</td>
-                </tr>
-            </tbody>
-        </table>
+     <table class="table table-hover table-bordered align-middle" id="contributionTable">
+    <thead class="table-light">
+        <tr>
+            <th>ID</th>
+            <th>Avatar</th>
+            <th>Full Name</th>                              
+            <th>Course</th>
+            <th>Year Graduated</th>
+            <th>Contribution Info</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $students = $conn->query("
+            SELECT * FROM users u 
+            LEFT JOIN st_course c ON u.user_id = c.student_id 
+            WHERE user_type='alumni'
+            ORDER BY year_graduated DESC, lastname ASC
+        ");
+
+        while ($row = $students->fetch_assoc()):
+        ?>
+        <tr>
+            <td class="s-id"><?= $row['user_id'] ?></td>
+
+            <td class="s-avatar">
+                <?php if ($row['avatar']): ?>
+                    <img src="uploads/<?= $row['avatar'] ?>" width="40" height="40" style="border-radius:50%;">
+                <?php else: ?>
+                    <span class="text-muted">No Avatar</span>
+                <?php endif; ?>
+            </td>
+
+            <td class="s-fullname"><?= htmlspecialchars($row['firstname'] . " " . ($row['middlename'] ? $row['middlename'] . " " : "") . $row['lastname']) ?></td>
+
+            <td class="s-course"><?= htmlspecialchars($row['course']) ?></td>
+            <td class="s-year_graduated"><?= $row['year_graduated'] ?></td>
+
+            <td class="s-contributions">
+                <?php
+                $list_contrib = $conn->query("
+                    SELECT `contribution_type`, `contribution_desc`, `date_contributed` 
+                    FROM `alumni_contributions`
+                    WHERE alumni_id={$row['user_id']}
+                    ORDER BY date_contributed DESC
+                ");
+
+                if ($list_contrib->num_rows > 0) {
+                    echo '<ul class="contribution-list">';
+                    while ($contrib = $list_contrib->fetch_assoc()) {
+                        echo '<li>
+                                <span class="contrib-date">' . date('M d Y', strtotime($contrib['date_contributed'])) . '</span> - 
+                                <span class="contrib-type badge bg-primary">' . htmlspecialchars($contrib['contribution_type']) . '</span>: 
+                                ' . htmlspecialchars($contrib['contribution_desc']) . '
+                              </li>';
+                    }
+                    echo '</ul>';
+                } else {
+                    echo '<span class="text-muted">No contributions yet</span>';
+                }
+                ?>
+            </td>
+        </tr>
+        <?php endwhile; ?>
+    </tbody>
+</table>
+
     </div>
 
     <!-- Summary -->

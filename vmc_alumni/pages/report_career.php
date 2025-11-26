@@ -1,3 +1,6 @@
+<?php
+include 'connection.php';
+?>
 <style>
 body {
     background: #f5f6fa;
@@ -26,86 +29,197 @@ input.search-box, select.filter-course, select.filter-year {
     padding: 5px 10px;
     margin-right: 10px;
 }
+.career-list {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+    .career-list li {
+        padding: 6px 0;
+        border-bottom: 1px solid #f1f1f1;
+        font-size: 0.95rem;
+    }
+
+    .career-title {
+        font-size: 0.85rem;
+        margin-right: 4px;
+    }
+
+    .career-company {
+        font-weight: bold;
+    }
+
+    .career-years {
+        color: #555;
+    }
+
+    .career-list li:last-child {
+        border-bottom: none;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f9f9f9;
+    }
 </style>
 
 <div class="content-box">
     <h3 class="fw-bold text-primary mb-4">Career & Achievement Report</h3>
 
-    <div class="d-flex mb-3">
-        <input type="text" id="searchCareer" class="search-box" placeholder="Search alumni...">
+    <div class="d-flex mb-3">    
         <select id="filterCourse" class="filter-course">
-            <option value="">All Courses</option>
-            <option value="BSIT">BS Information Technology</option>
-            <option value="BSCS">BS Computer Science</option>
-            <option value="BSA">BS Accountancy</option>
-            <option value="BSTM">BS Tourism Management</option>
+             <option value="">All Courses</option>
+          
+                                <optgroup label="Information Technology & Computing">
+                                    <option value="BSIT">BS Information Technology (BSIT)</option>
+                                    <option value="BSCS">BS Computer Science (BSCS)</option>
+                                    <option value="BSCpE">BS Computer Engineering (BSCpE)</option>
+                                    <option value="BSIS">BS Information Systems (BSIS)</option>
+                                </optgroup>
+
+                                <optgroup label="Business & Management">
+                                    <option value="BSBA">BS Business Administration (BSBA)</option>
+                                    <option value="BSA">BS Accountancy (BSA)</option>
+                                    <option value="BSMA">BS Management Accounting (BSMA)</option>
+                                    <option value="BSTM">BS Tourism Management (BSTM)</option>
+                                    <option value="BHM">BS Hospitality Management (BHM)</option>
+                                </optgroup>
+
+                                <optgroup label="Education">
+                                    <option value="BEEd">Bachelor of Elementary Education (BEEd)</option>
+                                    <option value="BSEd-English">BSEd Major in English</option>
+                                    <option value="BSEd-Math">BSEd Major in Mathematics</option>
+                                    <option value="BPEd">Bachelor of Physical Education (BPEd)</option>
+                                </optgroup>
+
+                                <optgroup label="Engineering">
+                                    <option value="BSCE">BS Civil Engineering (BSCE)</option>
+                                    <option value="BSEE">BS Electrical Engineering (BSEE)</option>
+                                    <option value="BSME">BS Mechanical Engineering (BSME)</option>
+                                    <option value="BSECE">BS Electronics Engineering (BSECE)</option>
+                                </optgroup>
+
+                                <optgroup label="Health & Allied Programs">
+                                    <option value="BSN">BS Nursing (BSN)</option>
+                                    <option value="BSP">BS Pharmacy (BSP)</option>
+                                    <option value="BSMT">BS Medical Technology (BSMT)</option>
+                                    <option value="BSPsych">BS Psychology (BS Psych)</option>
+                                </optgroup>
+
+                                <optgroup label="Public Safety">
+                                    <option value="BSCrim">BS Criminology (BSCrim)</option>
+                                </optgroup>
+
+                                <optgroup label="Arts & Sciences">
+                                    <option value="BSPA">BS Public Administration</option>
+                                    <option value="ABComm">AB Communication</option>
+                                    <option value="ABPolSci">AB Political Science</option>
+                                </optgroup>
         </select>
-        <select id="filterYear" class="filter-year">
-            <option value="">All Graduation Years</option>
-            <option value="2020">2020</option>
-            <option value="2021">2021</option>
-            <option value="2022">2022</option>
-            <option value="2023">2023</option>
-        </select>
-        <button id="btnFilterCareer" class="btn btn-outline-secondary">Filter</button>
+       <select id="filterYear" class="filter-year">
+    <option value="">All Graduation Years</option>
+    <?php
+        $startYear = 1970;
+        $endYear = 2025;
+
+        for ($year = $startYear; $year <= $endYear; $year++) {
+            echo "<option value=\"$year\">$year</option>";
+        }
+    ?>
+</select>
+
+    
     </div>
 
     <div class="table-responsive">
-        <table class="table table-hover table-bordered align-middle" id="careerTable">
-            <thead class="table-light">
-                <tr>
-                    <th>#</th>
-                    <th>Full Name</th>
-                    <th>Course</th>
-                    <th>Graduation Year</th>
-                    <th>Current Job/Position</th>
-                    <th>Company</th>
-                    <th>Achievements</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Juan Santos Cruz</td>
-                    <td>BSIT</td>
-                    <td>2020</td>
-                    <td>Software Engineer</td>
-                    <td>ABC Tech</td>
-                    <td>Employee of the Year 2022</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Maria Lopez Reyes</td>
-                    <td>BSA</td>
-                    <td>2021</td>
-                    <td>Accountant</td>
-                    <td>XYZ Accounting</td>
-                    <td>Certified Public Accountant</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Pedro Ramos Diaz</td>
-                    <td>BSCS</td>
-                    <td>2022</td>
-                    <td>IT Consultant</td>
-                    <td>Tech Solutions</td>
-                    <td>Developed Award-Winning App</td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>Ana Santos Cruz</td>
-                    <td>BSTM</td>
-                    <td>2023</td>
-                    <td>Tourism Manager</td>
-                    <td>TravelCo</td>
-                    <td>Best Tourism Innovator Award</td>
-                </tr>
-            </tbody>
-        </table>
+       <table class="table table-hover table-bordered align-middle" id="careerTable">
+    <thead class="table-light">
+        <tr>
+            <th>ID</th>
+            <th>Avatar</th>
+            <th>Full Name</th>                              
+            <th>Course</th>
+            <th>Year Graduated</th>
+            <th>Career Info</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $students = $conn->query("
+            SELECT * FROM users u 
+            LEFT JOIN st_course c ON u.user_id = c.student_id 
+            WHERE user_type='alumni'
+            ORDER BY year_graduated DESC, lastname ASC
+        ");
+
+        while ($row = $students->fetch_assoc()):
+        ?>
+        <tr>
+            <td class="s-id"><?= $row['user_id'] ?></td>
+
+            <td class="s-avatar">
+                <?php if ($row['avatar']): ?>
+                    <img src="uploads/<?= $row['avatar'] ?>" width="40" height="40" style="border-radius:50%;">
+                <?php else: ?>
+                    <span class="text-muted">No Avatar</span>
+                <?php endif; ?>
+            </td>
+
+            <td class="s-fullname"><?= htmlspecialchars($row['firstname'] . " " . ($row['middlename'] ? $row['middlename'] . " " : "") . $row['lastname']) ?></td>
+
+            <td class="s-course"><?= htmlspecialchars($row['course']) ?></td>
+            <td class="s-year_graduated"><?= $row['year_graduated'] ?></td>
+
+            <td class="s-careers">
+                <?php
+                $list_career = $conn->query("
+                    SELECT `company_name`, `position_title`, `start_year`, `end_year` 
+                    FROM `alumni_career_paths` 
+                    WHERE alumni_id = " . $row['user_id'] . " 
+                    ORDER BY `end_year` DESC, `start_year` DESC
+                ");
+
+                if ($list_career->num_rows > 0) {
+                    echo '<ul class="career-list">';
+                    while ($career = $list_career->fetch_assoc()) {
+                        $start = $career['start_year'] ?: 'N/A';
+                        $end = $career['end_year'] ?: 'Present';
+                        echo '<li>
+                                <span class="career-title badge bg-success">' . htmlspecialchars($career['position_title']) . '</span> at 
+                                <span class="career-company">' . htmlspecialchars($career['company_name']) . '</span> 
+                                (<span class="career-years">' . $start . ' - ' . $end . '</span>)
+                              </li>';
+                    }
+                    echo '</ul>';
+                } else {
+                    echo '<span class="text-muted">No career info available</span>';
+                }
+                ?>
+            </td>
+        </tr>
+        <?php endwhile; ?>
+    </tbody>
+</table>
+
     </div>
 </div>
 
 <script>
+
+    var table = $(".table").DataTable({
+        responsive: true,
+        pageLength: 10,
+        lengthChange: false
+    });
+
+    $("#filterCourse").change(function(){
+  table.column(3).search(this.value).draw();
+    })
+
+        $("#filterYear").change(function(){
+  table.column(4).search(this.value).draw();
+    })
+
 // Search function
 document.getElementById("searchCareer").addEventListener("keyup", function(){
     let query = this.value.toLowerCase();

@@ -80,7 +80,7 @@
 
                     <td class="s-avatar">
                         <?php if ($row['avatar']): ?>
-                            <img src="uploads/<?= $row['avatar'] ?>" width="40" height="40" style="border-radius:50%;">
+                            <img src="query/uploads/avatars/<?= $row['avatar'] ?>" width="40" height="40" style="border-radius:50%;">
                         <?php endif; ?>
                     </td>
 

@@ -150,7 +150,7 @@ include 'connection.php';
         responsive: true,
         pageLength: 10,
         lengthChange: false
-    });;
+    });
 
     $("#filterStatus").on("change", function () {
     table.column(5).search(this.value).draw();

@@ -1,3 +1,6 @@
+<?php
+include 'connection.php';
+?>
 <style>
 body {
     background: #f5f6fa;
@@ -34,63 +37,120 @@ input.search-box, select.filter-course {
     </div>
 
     <div class="d-flex mb-3">
-        <input type="text" id="searchAlumni" class="search-box" placeholder="Search alumni...">
+       
         <select id="filterCourse" class="filter-course">
             <option value="">All Courses</option>
-            <option value="BSIT">BS Information Technology</option>
-            <option value="BSCS">BS Computer Science</option>
-            <option value="BSA">BS Accountancy</option>
-            <option value="BSTM">BS Tourism Management</option>
+          
+                                <optgroup label="Information Technology & Computing">
+                                    <option value="BSIT">BS Information Technology (BSIT)</option>
+                                    <option value="BSCS">BS Computer Science (BSCS)</option>
+                                    <option value="BSCpE">BS Computer Engineering (BSCpE)</option>
+                                    <option value="BSIS">BS Information Systems (BSIS)</option>
+                                </optgroup>
+
+                                <optgroup label="Business & Management">
+                                    <option value="BSBA">BS Business Administration (BSBA)</option>
+                                    <option value="BSA">BS Accountancy (BSA)</option>
+                                    <option value="BSMA">BS Management Accounting (BSMA)</option>
+                                    <option value="BSTM">BS Tourism Management (BSTM)</option>
+                                    <option value="BHM">BS Hospitality Management (BHM)</option>
+                                </optgroup>
+
+                                <optgroup label="Education">
+                                    <option value="BEEd">Bachelor of Elementary Education (BEEd)</option>
+                                    <option value="BSEd-English">BSEd Major in English</option>
+                                    <option value="BSEd-Math">BSEd Major in Mathematics</option>
+                                    <option value="BPEd">Bachelor of Physical Education (BPEd)</option>
+                                </optgroup>
+
+                                <optgroup label="Engineering">
+                                    <option value="BSCE">BS Civil Engineering (BSCE)</option>
+                                    <option value="BSEE">BS Electrical Engineering (BSEE)</option>
+                                    <option value="BSME">BS Mechanical Engineering (BSME)</option>
+                                    <option value="BSECE">BS Electronics Engineering (BSECE)</option>
+                                </optgroup>
+
+                                <optgroup label="Health & Allied Programs">
+                                    <option value="BSN">BS Nursing (BSN)</option>
+                                    <option value="BSP">BS Pharmacy (BSP)</option>
+                                    <option value="BSMT">BS Medical Technology (BSMT)</option>
+                                    <option value="BSPsych">BS Psychology (BS Psych)</option>
+                                </optgroup>
+
+                                <optgroup label="Public Safety">
+                                    <option value="BSCrim">BS Criminology (BSCrim)</option>
+                                </optgroup>
+
+                                <optgroup label="Arts & Sciences">
+                                    <option value="BSPA">BS Public Administration</option>
+                                    <option value="ABComm">AB Communication</option>
+                                    <option value="ABPolSci">AB Political Science</option>
+                                </optgroup>
         </select>
-        <button id="btnFilter" class="btn btn-outline-secondary">Filter</button>
+    
     </div>
 
     <div class="table-responsive">
         <table class="table table-hover table-bordered align-middle" id="alumniTable">
-            <thead class="table-light">
+             <thead class="table-light">
                 <tr>
-                    <th>#</th>
-                    <th>Full Name</th>
+                    <th>ID</th>
+                    <th>Avatar</th>
+                    <th>Full Name</th>                   
+                    <th>Birthday</th>
                     <th>Course</th>
-                    <th>Email</th>
-                    <th>Contact</th>
+                    <th>Year Graduated</th>
+                  
+                    
                 </tr>
             </thead>
+
             <tbody>
+                <?php
+                $students = $conn->query("
+                    SELECT * FROM users u 
+                    LEFT JOIN st_course c ON u.user_id = c.student_id 
+                    WHERE user_type='alumni'
+                    ORDER BY lastname ASC
+                ");
+
+                while ($row = $students->fetch_assoc()):
+                ?>
                 <tr>
-                    <td>1</td>
-                    <td>Juan Santos Cruz</td>
-                    <td>BSIT</td>
-                    <td>juan@example.com</td>
-                    <td>09123456789</td>
+                    <td class="s-id"><?= $row['user_id'] ?></td>
+
+                    <td class="s-avatar">
+                        <?php if ($row['avatar']): ?>
+                            <img src="query/uploads/avatars/<?= $row['avatar'] ?>" width="40" height="40" style="border-radius:50%;">
+                        <?php endif; ?>
+                    </td>
+
+                    <td class="s-firstname"><?= $row['firstname']." ".$row['middlename']." ". $row['lastname'] ?></td>
+        
+                    <td class="s-birthday"><?= $row['birthday'] ?></td>
+
+                    <td class="s-course"><?= $row['course'] ?></td>
+                    <td class="s-year_graduated"><?= $row['year_graduated'] ?></td>
+                  
+                    
                 </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Maria Lopez Reyes</td>
-                    <td>BSA</td>
-                    <td>maria@example.com</td>
-                    <td>09234567890</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Pedro Ramos Diaz</td>
-                    <td>BSCS</td>
-                    <td>pedro@example.com</td>
-                    <td>09345678901</td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>Ana Santos Cruz</td>
-                    <td>BSTM</td>
-                    <td>ana@example.com</td>
-                    <td>09456789012</td>
-                </tr>
+                <?php endwhile; ?>
             </tbody>
         </table>
     </div>
 </div>
 
 <script>
+
+    var table = $(".table").DataTable({
+        responsive: true,
+        pageLength: 10,
+        lengthChange: false
+    });
+
+    $("#filterCourse").change(function(){
+  table.column(6).search(this.value).draw();
+    })
 // Search function
 document.getElementById("searchAlumni").addEventListener("keyup", function(){
     let query = this.value.toLowerCase();

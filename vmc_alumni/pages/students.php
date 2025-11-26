@@ -79,7 +79,7 @@
 
                     <td class="s-avatar">
                         <?php if ($row['avatar']): ?>
-                            <img src="uploads/<?= $row['avatar'] ?>" width="40" height="40" style="border-radius:50%;">
+                            <img src="query/uploads/avatars/<?= $row['avatar'] ?>" width="40" height="40" style="border-radius:50%;">
                         <?php endif; ?>
                     </td>
 
@@ -294,6 +294,7 @@ $(".btnDelete").on("click", function(){
             type: 'POST',
             data: { delete_id: delete_id },
             success: function(response){
+            alert(response)
                 alert('Student deleted successfully!');
                 location.reload(); // Reload the page to see changes
             },

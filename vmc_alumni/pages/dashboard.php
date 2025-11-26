@@ -8,8 +8,15 @@ $today = date('Y-m-d');
 // Fetch current & ongoing events
 $events = $conn->query("SELECT * FROM events WHERE '$today' BETWEEN event_date_start AND event_date_end ORDER BY event_date_start ASC");
 
+
+
+
 // Fetch student's graduation requests
-$requests = $conn->query("SELECT * FROM graduation_requests WHERE student_id='$user_id' ORDER BY request_date DESC");
+
+$where = ($_SESSION['role'] =='student')?" where student_id=$user_id":"";
+$requests = $conn->query("SELECT * FROM graduation_requests  g join users u on g.student_id=u.user_id $where  ORDER BY request_date DESC");
+
+
 ?>
 <style>
     body {
@@ -81,6 +88,8 @@ $requests = $conn->query("SELECT * FROM graduation_requests WHERE student_id='$u
 
 
 <div class="content-box">
+
+
 <?php 
 if($_SESSION['role'] == 'student'):
 ?>
@@ -116,16 +125,15 @@ if($_SESSION['role'] == 'student'):
     <!-- Student Requests Table -->
     <div class="card">
         <div class="card-body">
-            <h5>My Graduation Requests</h5>
+            <h5>My Pictorial Requests</h5>
             <div class="table-responsive mt-3">
                 <table class="table table-bordered table-striped">
                     <thead class="table-light">
                         <tr>
                             <th>#</th>
-                            <th>Request Date</th>
-                            <th>Purpose</th>
+                            <th>Request Date</th>              
                             <th>Status</th>
-                            <th>Remarks</th>
+                          
                         </tr>
                     </thead>
                     <tbody>
@@ -133,13 +141,12 @@ if($_SESSION['role'] == 'student'):
                             <?php $i=1; while($req = $requests->fetch_assoc()): ?>
                                 <tr>
                                     <td><?= $i++ ?></td>
-                                    <td><?= date('M d, Y', strtotime($req['request_date'])) ?></td>
-                                    <td><?= htmlspecialchars($req['purpose']) ?></td>
+                                    <td><?= date('M d, Y', strtotime($req['request_date'])) ?></td>                            
                                     <td class="fw-bold
                                         <?= $req['status']=='Approved' ? 'status-approved' : ($req['status']=='Rejected' ? 'status-rejected' : 'status-pending') ?>">
                                         <?= $req['status'] ?>
                                     </td>
-                                    <td><?= htmlspecialchars($req['remarks']) ?></td>
+                                 
                                 </tr>
                             <?php endwhile; ?>
                         <?php else: ?>
@@ -156,9 +163,44 @@ if($_SESSION['role'] == 'student'):
 ?>
 
 
+<?php 
+if($_SESSION['role'] == 'alumni'):
+?>
+    <h3 class="fw-bold text-primary mb-4">Alumni Dashboard</h3>
+
+    <!-- Current & Ongoing Events -->
+    <div class="card">
+        <div class="card-body">
+            <h5>Current & Ongoing Events</h5>
+            <?php if($events->num_rows > 0): ?>
+                <div class="row g-3 mt-2">
+                    <?php while($event = $events->fetch_assoc()): ?>
+                       <div class="col-md-4">
+            <div class="card status-current">
+                <div class="card-body">
+                    <h5 class="card-title"><?= $event['event_title'] ?></h5>
+                    <span class="badge-status badge-current">Current</span>
+                    <p class="card-text"><?= $event['event_desc'] ?></p>
+                    <p class="mb-1 text-muted"><i class="bi bi-calendar-event"></i> <?= date('M d, Y', strtotime($event['event_date_start'])) ?> - <?= date('M d, Y', strtotime($event['event_date_end'])) ?></p>
+                     
+                </div>
+            </div>
+        </div>
+                    
+                    <?php endwhile; ?>
+                </div>
+            <?php else: ?>
+                <p class="text-muted mt-2">No current events.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+
+<?php endif;
+?>
+
 
 <?php 
-if($_SESSION['role'] == 'admin'):
+if($_SESSION['role'] == 'admin' || $_SESSION['role'] == 'staff'):
 ?>
     <h3 class="fw-bold text-primary mb-4">Admin Dashboard</h3>
 
@@ -192,16 +234,16 @@ if($_SESSION['role'] == 'admin'):
     <!-- Student Requests Table -->
     <div class="card">
         <div class="card-body">
-            <h5>My Graduation Requests</h5>
+            <h5>Students Pictorial Requests</h5>
             <div class="table-responsive mt-3">
                 <table class="table table-bordered table-striped">
                     <thead class="table-light">
                         <tr>
                             <th>#</th>
-                            <th>Request Date</th>
-                            <th>Purpose</th>
+                            <th>Student Name</th>
+                            <th>Schedule Date</th>                          
                             <th>Status</th>
-                            <th>Remarks</th>
+     
                         </tr>
                     </thead>
                     <tbody>
@@ -209,13 +251,14 @@ if($_SESSION['role'] == 'admin'):
                             <?php $i=1; while($req = $requests->fetch_assoc()): ?>
                                 <tr>
                                     <td><?= $i++ ?></td>
+                                    <td><?=$req['firstname']." ".$req['middlename']." ".$req['lastname']?></td>
                                     <td><?= date('M d, Y', strtotime($req['request_date'])) ?></td>
-                                    <td><?= htmlspecialchars($req['purpose']) ?></td>
+                                    
                                     <td class="fw-bold
                                         <?= $req['status']=='Approved' ? 'status-approved' : ($req['status']=='Rejected' ? 'status-rejected' : 'status-pending') ?>">
                                         <?= $req['status'] ?>
                                     </td>
-                                    <td><?= htmlspecialchars($req['remarks']) ?></td>
+                           
                                 </tr>
                             <?php endwhile; ?>
                         <?php else: ?>
@@ -232,3 +275,6 @@ if($_SESSION['role'] == 'admin'):
 ?>
 
 </div>
+<script>
+    $(".table").DataTable()
+</script>
