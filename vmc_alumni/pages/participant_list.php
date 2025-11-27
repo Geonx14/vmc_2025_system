@@ -2,7 +2,7 @@
 include 'connection.php';
 $event_id=$_GET['event_id'];
 $event_info = $conn->query("select * from events where event_id=$event_id")->fetch_assoc();
-$participant_list = $conn->query("select *, ifnull(e.status,'JOINING') as stat from users u left join st_course st on u.user_id=st.student_id LEFT JOIN event_participants e on u.user_id=e.user_id and event_id = 4   where user_type in ('alumni', 'student')")
+$participant_list = $conn->query("select *,u.user_id as uid, ifnull(e.status,'JOINING') as stat from users u left join st_course st on u.user_id=st.student_id LEFT JOIN event_participants e on u.user_id=e.user_id and event_id = 4   where user_type in ('alumni', 'student')")
 ?>
 <div class="card mb-4">
     <div class="card-body">
@@ -106,12 +106,12 @@ $participant_list = $conn->query("select *, ifnull(e.status,'JOINING') as stat f
                     while($row = $participant_list->fetch_assoc()):
                     ?>
                     <tr>
-                        <td><?= $row['user_id'] ?></td>
+                        <td><?= $row['uid'] ?></td>
                         <td><?= $row['firstname']." ". $row['middlename']." ". $row['lastname'] ?></td>
                         <td><?= $row['user_type'] ?></td>
                         <td><?= $row['course'] ?></td>
                         <td>
-                          <button class="btn <?= ($row['stat'] == "JOINING")?'btn-warning':'btn-success' ?> btn-sm btn-join" data-id="<?=  $row['user_id'] ?>" ><?= $row['stat'] ?></button>
+                          <button class="btn <?= ($row['stat'] == "JOINING")?'btn-warning':'btn-success' ?> btn-sm btn-join" data-id="<?=  $row['uid'] ?>" ><?= $row['stat'] ?></button>
                         </td>
                     </tr>
                    <?php endwhile;?>
