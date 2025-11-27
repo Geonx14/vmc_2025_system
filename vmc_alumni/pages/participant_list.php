@@ -144,10 +144,8 @@ $.ajax({
     method:'post',
     data:{user_id:user_id, event_id:event_id, status:status},
     success:function(data){
-        alert(data)
-    }
-})
-    if(status == 'JOINED')    {
+       if(data == '1'){
+if(status == 'JOINED')    {
 $(this).html("JOINED");
 $(this).removeClass("btn-warning");
 $(this).addClass("btn-success");
@@ -160,6 +158,13 @@ $(this).removeClass("btn-success");
 $(this).addClass("btn-warning");
 
     }
+       }
+       else{
+        alert("error:"+data)
+       }
+    }
+})
+    
 
     })
 </script>
