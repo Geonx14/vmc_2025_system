@@ -2,7 +2,7 @@
 include 'connection.php';
 $event_id=$_GET['event_id'];
 $event_info = $conn->query("select * from events where event_id=$event_id")->fetch_assoc();
-$participant_list = $conn->query("select *,u.user_id as uid, ifnull(e.status,'JOINING') as stat from users u left join st_course st on u.user_id=st.student_id LEFT JOIN event_participants e on u.user_id=e.user_id and event_id = $event_id  where user_type in ('alumni', 'student')")
+$participant_list = $conn->query("select *,u.user_id as uid, ifnull(e.status,'JOIN') as stat from users u left join st_course st on u.user_id=st.student_id LEFT JOIN event_participants e on u.user_id=e.user_id and event_id = $event_id  where user_type in ('alumni', 'student')")
 ?>
 <div class="card mb-4">
     <div class="card-body">
@@ -111,7 +111,7 @@ $participant_list = $conn->query("select *,u.user_id as uid, ifnull(e.status,'JO
                         <td><?= $row['user_type'] ?></td>
                         <td><?= $row['course'] ?></td>
                         <td>
-                          <button class="btn <?= ($row['stat'] == "JOINING")?'btn-warning':'btn-success' ?> btn-sm btn-join" data-id="<?=  $row['uid'] ?>" ><?= $row['stat'] ?></button>
+                          <button class="btn <?= ($row['stat'] == "JOIN")?'btn-warning':'btn-success' ?> btn-sm btn-join" data-id="<?=  $row['uid'] ?>" ><?= $row['stat'] ?></button>
                         </td>
                     </tr>
                    <?php endwhile;?>
@@ -136,7 +136,7 @@ $participant_list = $conn->query("select *,u.user_id as uid, ifnull(e.status,'JO
     })
     $(".btn-join").click(function(){
         var user_id = $(this).data('id');
-        var status  = $(this).html() == "JOINING"?"JOINED":"JOINING";
+        var status  = $(this).html() == "JOIN"?"JOINED":"JOIN";
         var event_id = <?=  $event_id; ?>;
 
 $.ajax({
@@ -154,7 +154,7 @@ $(this).addClass("btn-success");
     else{
 
 
-$(this).html("JOINING");
+$(this).html("JOIN");
 $(this).removeClass("btn-success");
 $(this).addClass("btn-warning");
 
