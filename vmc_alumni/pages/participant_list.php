@@ -2,7 +2,7 @@
 include 'connection.php';
 $event_id=$_GET['event_id'];
 $event_info = $conn->query("select * from events where event_id=$event_id")->fetch_assoc();
-$participant_list = $conn->query("select *,u.user_id as uid, ifnull(e.status,'JOINING') as stat from users u left join st_course st on u.user_id=st.student_id LEFT JOIN event_participants e on u.user_id=e.user_id and event_id = 4   where user_type in ('alumni', 'student')")
+$participant_list = $conn->query("select *,u.user_id as uid, ifnull(e.status,'JOINING') as stat from users u left join st_course st on u.user_id=st.student_id LEFT JOIN event_participants e on u.user_id=e.user_id and event_id = $event_id  where user_type in ('alumni', 'student')")
 ?>
 <div class="card mb-4">
     <div class="card-body">
