@@ -138,7 +138,7 @@ $participant_list = $conn->query("select *,u.user_id as uid, ifnull(e.status,'JO
         var user_id = $(this).data('id');
         var status  = $(this).html() == "JOINING"?"JOINED":"JOINING";
         var event_id = <?=  $event_id; ?>;
-alert(user_id)
+
 $.ajax({
     url:'query/participant_join.php',
     method:'post',
