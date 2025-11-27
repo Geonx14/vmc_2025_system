@@ -91,6 +91,41 @@ $requests = $conn->query("SELECT * FROM graduation_requests  g join users u on g
 
 
 <?php 
+if($_SESSION['role'] == 'alumni'):
+?>
+    <h3 class="fw-bold text-primary mb-4">Alumni Dashboard</h3>
+
+    <!-- Current & Ongoing Events -->
+    <div class="card">
+        <div class="card-body">
+            <h5>Current & Ongoing Events</h5>
+            <?php if($events->num_rows > 0): ?>
+                <div class="row g-3 mt-2">
+                    <?php while($event = $events->fetch_assoc()): ?>
+                       <div class="col-md-4">
+            <div class="card status-current">
+                <div class="card-body">
+                    <h5 class="card-title"><?= $event['event_title'] ?></h5>
+                    <span class="badge-status badge-current">Current</span>
+                    <p class="card-text"><?= $event['event_desc'] ?></p>
+                    <p class="mb-1 text-muted"><i class="bi bi-calendar-event"></i> <?= date('M d, Y', strtotime($event['event_date_start'])) ?> - <?= date('M d, Y', strtotime($event['event_date_end'])) ?></p>
+                     
+                </div>
+            </div>
+        </div>
+                    
+                    <?php endwhile; ?>
+                </div>
+            <?php else: ?>
+                <p class="text-muted mt-2">No current events.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+
+<?php endif;
+?>
+
+<?php 
 if($_SESSION['role'] == 'student'):
 ?>
     <h3 class="fw-bold text-primary mb-4">Student Dashboard</h3>
