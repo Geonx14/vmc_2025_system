@@ -15,7 +15,7 @@ if ($is_exist->num_rows > 0) {
 
     $conn->query("
         UPDATE event_participants 
-        SET status = '$status' ,data_participated='$datetime'
+        SET status = '$status' ,date_participated='$datetime'
         WHERE event_id = '$event_id' 
           AND user_id = '$user_id'
     ");
@@ -25,7 +25,7 @@ if ($is_exist->num_rows > 0) {
 } else {
 
     $conn->query("
-        INSERT INTO event_participants (event_id, user_id, status,data_participated) 
+        INSERT INTO event_participants (event_id, user_id, status,date_participated) 
         VALUES ('$event_id', '$user_id', '$status','$datetime')
     ");
 
