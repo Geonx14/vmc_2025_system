@@ -90,7 +90,7 @@ $badge = ($row['status'] == "pending")
             <td><?=  ($row['status'] != 'approved')? $row['rejection_reason']:$row['professional_fee'] ;?></td>
             <td>
                 <button class="btn btn-sm btn-secondary btn-edit" <?=     $is_disabled  ?>>Edit</button>
-                <button class="btn btn-sm btn-danger btn-delete" <?=     $is_disabled  ?>>Delete</button>
+                <button class="btn btn-sm btn-danger btn-delete" data-id="<?= $row['appointment_id'] ?>"  <?= $is_disabled  ?>>Delete</button>
             </td>
         </tr>
         <?php }  ?>
@@ -168,5 +168,23 @@ var parts = datetime.split(" "); // ["2025-11-21", "15:03:10"]
             }
         });
     });
+
+$(".btn-delete").click(function () {
+    var id = $(this).data('id');
+
+    if (confirm("Are you sure you want to delete this book?")) {
+        $.ajax({
+            url: 'query/delete_book.php',
+            method: 'POST',
+            data: { id: id },
+            success: function (data) {
+                alert("Succesfuly deleted!");
+                window.location.reload();
+            }
+        });
+    }
+});
+
+
 });
 </script>
