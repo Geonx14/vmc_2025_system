@@ -155,6 +155,7 @@ body {
 </div>
 
 <script>
+    
  var table = $(".table").DataTable({
         responsive: true,
         pageLength: 10,
@@ -164,10 +165,12 @@ body {
     $("#filterCourse").change(function(){
   table.column(3).search(this.value).draw();
     })
+    
     $("#filterEvent").change(function(){
   table.column(5).search(this.value).draw();
-    })
-        $("#filterType").change(function(){
+    }) 
+    
+    $("#filterType").change(function(){
   table.column(4).search(this.value).draw();
     })
   
