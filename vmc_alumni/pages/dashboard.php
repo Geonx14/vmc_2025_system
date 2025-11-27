@@ -164,42 +164,6 @@ if($_SESSION['role'] == 'student'):
 
 
 <?php 
-if($_SESSION['role'] == 'alumni'):
-?>
-    <h3 class="fw-bold text-primary mb-4">Alumni Dashboard</h3>
-
-    <!-- Current & Ongoing Events -->
-    <div class="card">
-        <div class="card-body">
-            <h5>Current & Ongoing Events</h5>
-            <?php if($events->num_rows > 0): ?>
-                <div class="row g-3 mt-2">
-                    <?php while($event = $events->fetch_assoc()): ?>
-                       <div class="col-md-4">
-            <div class="card status-current">
-                <div class="card-body">
-                    <h5 class="card-title"><?= $event['event_title'] ?></h5>
-                    <span class="badge-status badge-current">Current</span>
-                    <p class="card-text"><?= $event['event_desc'] ?></p>
-                    <p class="mb-1 text-muted"><i class="bi bi-calendar-event"></i> <?= date('M d, Y', strtotime($event['event_date_start'])) ?> - <?= date('M d, Y', strtotime($event['event_date_end'])) ?></p>
-                     
-                </div>
-            </div>
-        </div>
-                    
-                    <?php endwhile; ?>
-                </div>
-            <?php else: ?>
-                <p class="text-muted mt-2">No current events.</p>
-            <?php endif; ?>
-        </div>
-    </div>
-
-<?php endif;
-?>
-
-
-<?php 
 if($_SESSION['role'] == 'admin' || $_SESSION['role'] == 'staff'):
 ?>
     <h3 class="fw-bold text-primary mb-4">Admin Dashboard</h3>
@@ -211,17 +175,19 @@ if($_SESSION['role'] == 'admin' || $_SESSION['role'] == 'staff'):
             <?php if($events->num_rows > 0): ?>
                 <div class="row g-3 mt-2">
                     <?php while($event = $events->fetch_assoc()): ?>
-                       <div class="col-md-4">
+                          <a style="text-decoration: none;cursor: pointer;"  <?php if ($_SESSION['role']=='admin' || $_SESSION['role']=='staff') { ?>
+       href="?page=participant_list&event_id=<?= $event['event_id'] ?>"
+   <?php } ?> class="col-md-4">
             <div class="card status-current">
                 <div class="card-body">
-                    <h5 class="card-title"><?= $event['event_title'] ?></h5>
+                    <h5 class="card-title"><?=  $event['event_title'] ?></h5>
                     <span class="badge-status badge-current">Current</span>
-                    <p class="card-text"><?= $event['event_desc'] ?></p>
-                    <p class="mb-1 text-muted"><i class="bi bi-calendar-event"></i> <?= date('M d, Y', strtotime($event['event_date_start'])) ?> - <?= date('M d, Y', strtotime($event['event_date_end'])) ?></p>
-                     
+                    <p class="card-text"><?=  $event['event_desc'] ?></p>
+                     <p class="mb-1 text-muted"><i class="bi bi-calendar-event"></i> <?= date('M d, Y', strtotime($event['event_date_start'])) ?> - <?= date('M d, Y', strtotime($event['event_date_end'])) ?></p>
+                
                 </div>
             </div>
-        </div>
+</a>
                     
                     <?php endwhile; ?>
                 </div>

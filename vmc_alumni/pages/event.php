@@ -92,8 +92,9 @@ else:
 while($event = $eventsQuery->fetch_assoc()):
 
 ?>
-
-        <div class="col-md-4">
+        <a style="text-decoration: none;cursor: pointer;"  <?php if ($_SESSION['role']=='admin' || $_SESSION['role']=='staff') { ?>
+       href="?page=participant_list&event_id=<?= $event['event_id'] ?>"
+   <?php } ?> class="col-md-4">
             <div class="card status-current">
                 <div class="card-body">
                     <h5 class="card-title"><?=  $event['event_title'] ?></h5>
@@ -103,7 +104,7 @@ while($event = $eventsQuery->fetch_assoc()):
                 
                 </div>
             </div>
-        </div>
+</a>
 <?php endwhile; 
 endif;
 ?>

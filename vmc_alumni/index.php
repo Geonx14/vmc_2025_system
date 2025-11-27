@@ -167,7 +167,7 @@ body {
                 <i class="bi bi-calendar-event"></i> Manage Events
             </a>
 <?php endif; ?>
-            <a class="nav-link <?= $page=='event' ? 'active' : '' ?>" href="?page=event">
+            <a class="nav-link <?= $page=='event' || $page=='participant_list' ? 'active' : '' ?>" href="?page=event">
                 <i class="bi bi-calendar-event"></i> Events
             </a>
             <?php if($_SESSION['role']=='admin'): ?>
@@ -206,7 +206,7 @@ body {
             </div>
 <?php endif; ?>
             <a class="nav-link mt-2" href="?page=profile">
-                <i class="bi bi-person"></i> Profile
+                <i class="bi bi-person"></i> <?= ucwords($_SESSION['role']) ?> Profile
             </a>
 
         </nav>
