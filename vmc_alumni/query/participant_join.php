@@ -14,8 +14,7 @@ $is_exist = $conn->query("
 if ($is_exist->num_rows > 0) {
 
     $conn->query("
-        UPDATE event_participants 
-        SET status = '$status' ,date_participated='$datetime'
+        delete from event_participants        
         WHERE event_id = '$event_id' 
           AND user_id = '$user_id'
     ");
