@@ -143,8 +143,9 @@ $.ajax({
     url:'query/participant_join.php',
     method:'post',
     data:{user_id:user_id, event_id:event_id, status:status},
-    success:function(data){
-  
+    success:function(data){     
+    }
+})
 if(status == 'JOINED')    {
 $(this).html("JOINED");
 $(this).removeClass("btn-warning");
@@ -158,9 +159,6 @@ $(this).removeClass("btn-success");
 $(this).addClass("btn-warning");
 
     }
-       
-    }
-})
     
 
     })
