@@ -168,7 +168,7 @@ body {
   table.column(5).search(this.value).draw();
     })
         $("#filterType").change(function(){
-  table.column(2).search(this.value).draw();
+  table.column(4).search(this.value).draw();
     })
   
 </script>
