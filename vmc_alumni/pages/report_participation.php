@@ -143,7 +143,7 @@ body {
                     </td>
                     <td><?= $row['firstname']." ". $row['middlename']." ". $row['lastname'] ?></td>
                     <td><?= $row['course'] ?></td>
-                    <td><?= $row['user_id'] ?></td>
+                    <td><?= $row['user_type'] ?></td>
                     <td><?= ucwords($row['event_title']) ?></td>
                     <td><?= $row['date_participated'] ?></td>
                 </tr>
