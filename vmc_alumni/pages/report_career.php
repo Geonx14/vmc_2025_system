@@ -141,6 +141,7 @@ input.search-box, select.filter-course, select.filter-year {
             <th>Course</th>
             <th>Year Graduated</th>
             <th>Career Info</th>
+             <th>Achievements Info</th>
         </tr>
     </thead>
     <tbody>
@@ -188,6 +189,30 @@ input.search-box, select.filter-course, select.filter-year {
                                 <span class="career-title badge bg-success">' . htmlspecialchars($career['position_title']) . '</span> at 
                                 <span class="career-company">' . htmlspecialchars($career['company_name']) . '</span> 
                                 (<span class="career-years">' . $start . ' - ' . $end . '</span>)
+                              </li>';
+                    }
+                    echo '</ul>';
+                } else {
+                    echo '<span class="text-muted">No career info available</span>';
+                }
+                ?>
+            </td>
+             <td class="s-careers">
+                <?php
+                $list_career = $conn->query("
+                    SELECT * FROM alumni_achievements a                     WHERE alumni_id = '".$row['user_id'] ."'
+                    ORDER BY year DESC
+
+                ");
+
+                if ($list_career->num_rows > 0) {
+                    echo '<ul class="career-list">';
+                    while ($career = $list_career->fetch_assoc()) {
+                        $year = $career['year'] ?: 'N/A';      
+                        echo '<li>
+                                <span class="career-title badge bg-light text-dark">Title: ' . htmlspecialchars($career['achievement_title']) . ' | </span> 
+                                <span class="career-company">Description: ' . htmlspecialchars($career['achievement_desc']) . '</span> 
+                                (<span class="career-years">' . $year . '</span>)
                               </li>';
                     }
                     echo '</ul>';
