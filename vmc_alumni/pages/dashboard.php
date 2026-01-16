@@ -13,7 +13,7 @@ $events = $conn->query("SELECT * FROM events WHERE '$today' BETWEEN event_date_s
 
 // Fetch student's graduation requests
 
-$where = ($_SESSION['role'] =='student')?" where student_id=$user_id":"";
+$where = ($_SESSION['role'] == 'student') ? " where student_id=$user_id" : "";
 $requests = $conn->query("SELECT * FROM graduation_requests  g join users u on g.student_id=u.user_id $where  ORDER BY request_date DESC");
 
 
@@ -29,7 +29,7 @@ $requests = $conn->query("SELECT * FROM graduation_requests  g join users u on g
         background: #ffffff;
         border-radius: 12px;
         padding: 25px;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
     }
 
     h3.section-title {
@@ -40,14 +40,14 @@ $requests = $conn->query("SELECT * FROM graduation_requests  g join users u on g
 
     .card {
         border-radius: 12px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
         margin-bottom: 20px;
         transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
     }
 
     .card-body {
@@ -81,199 +81,195 @@ $requests = $conn->query("SELECT * FROM graduation_requests  g join users u on g
         font-weight: 500;
     }
 
-    .badge-current { background-color: #1a73e8; }
-    .badge-upcoming { background-color: #198754; }
+    .badge-current {
+        background-color: #1a73e8;
+    }
 
+    .badge-upcoming {
+        background-color: #198754;
+    }
 </style>
 
 
 <div class="content-box">
 
 
-<?php 
-if($_SESSION['role'] == 'alumni'):
-?>
-    <h3 class="fw-bold text-primary mb-4">Alumni Dashboard</h3>
+    <?php
+    if ($_SESSION['role'] == 'alumni'):
+    ?>
+        <h3 class="fw-bold text-primary mb-4">Alumni Dashboard</h3>
 
-    <!-- Current & Ongoing Events -->
-    <div class="card">
-        <div class="card-body">
-            <h5>Current & Ongoing Events</h5>
-            <?php if($events->num_rows > 0): ?>
+        <!-- Current & Ongoing Events -->
+        <div class="card">
+            <div class="card-body">
+                <h5>Current & Ongoing Events</h5>
+
                 <div class="row g-3 mt-2">
-                    <?php while($event = $events->fetch_assoc()): ?>
-                       <div class="col-md-4">
-            <div class="card status-current">
-                <div class="card-body">
-                    <h5 class="card-title"><?= $event['event_title'] ?></h5>
-                    <span class="badge-status badge-current">Current</span>
-                    <p class="card-text"><?= $event['event_desc'] ?></p>
-                    <p class="mb-1 text-muted"><i class="bi bi-calendar-event"></i> <?= date('M d, Y', strtotime($event['event_date_start'])) ?> - <?= date('M d, Y', strtotime($event['event_date_end'])) ?></p>
-                     
-                </div>
-            </div>
-        </div>
-                    
+                    <?php while ($event = $events->fetch_assoc()): ?>
+                        <div class="col-md-4">
+                            <div class="card status-current">
+                                <div class="card-body">
+                                    <h5 class="card-title"><?= $event['event_title'] ?></h5>
+                                    <span class="badge-status badge-current">Current</span>
+                                    <p class="card-text"><?= $event['event_desc'] ?></p>
+                                    <p class="mb-1 text-muted"><i class="bi bi-calendar-event"></i> <?= date('M d, Y', strtotime($event['event_date_start'])) ?> - <?= date('M d, Y', strtotime($event['event_date_end'])) ?></p>
+
+                                </div>
+                            </div>
+                        </div>
+
                     <?php endwhile; ?>
                 </div>
-            <?php else: ?>
-                <p class="text-muted mt-2">No current events.</p>
-            <?php endif; ?>
-        </div>
-    </div>
 
-<?php endif;
-?>
-
-<?php 
-if($_SESSION['role'] == 'student'):
-?>
-    <h3 class="fw-bold text-primary mb-4">Student Dashboard</h3>
-
-    <!-- Current & Ongoing Events -->
-    <div class="card">
-        <div class="card-body">
-            <h5>Current & Ongoing Events</h5>
-            <?php if($events->num_rows > 0): ?>
-                <div class="row g-3 mt-2">
-                    <?php while($event = $events->fetch_assoc()): ?>
-                       <div class="col-md-4">
-            <div class="card status-current">
-                <div class="card-body">
-                    <h5 class="card-title"><?= $event['event_title'] ?></h5>
-                    <span class="badge-status badge-current">Current</span>
-                    <p class="card-text"><?= $event['event_desc'] ?></p>
-                    <p class="mb-1 text-muted"><i class="bi bi-calendar-event"></i> <?= date('M d, Y', strtotime($event['event_date_start'])) ?> - <?= date('M d, Y', strtotime($event['event_date_end'])) ?></p>
-                     
-                </div>
             </div>
         </div>
-                    
-                    <?php endwhile; ?>
-                </div>
-            <?php else: ?>
-                <p class="text-muted mt-2">No current events.</p>
-            <?php endif; ?>
-        </div>
-    </div>
 
-    <!-- Student Requests Table -->
-    <div class="card">
-        <div class="card-body">
-            <h5>My Pictorial Requests</h5>
-            <div class="table-responsive mt-3">
-                <table class="table table-bordered table-striped">
-                    <thead class="table-light">
-                        <tr>
-                            <th>#</th>
-                            <th>Request Date</th>              
-                            <th>Status</th>
-                          
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if($requests->num_rows > 0): ?>
-                            <?php $i=1; while($req = $requests->fetch_assoc()): ?>
-                                <tr>
-                                    <td><?= $i++ ?></td>
-                                    <td><?= date('M d, Y', strtotime($req['request_date'])) ?></td>                            
-                                    <td class="fw-bold
-                                        <?= $req['status']=='Approved' ? 'status-approved' : ($req['status']=='Rejected' ? 'status-rejected' : 'status-pending') ?>">
-                                        <?= $req['status'] ?>
-                                    </td>
-                                 
-                                </tr>
-                            <?php endwhile; ?>
-                        <?php else: ?>
+    <?php endif;
+    ?>
+
+    <?php
+    if ($_SESSION['role'] == 'student'):
+    ?>
+        <h3 class="fw-bold text-primary mb-4">Student Dashboard</h3>
+
+        <!-- Current & Ongoing Events -->
+        <div class="card">
+            <div class="card-body">
+                <h5>Current & Ongoing Events</h5>
+                <?php if ($events->num_rows > 0): ?>
+                    <div class="row g-3 mt-2">
+                        <?php while ($event = $events->fetch_assoc()): ?>
+                            <div class="col-md-4">
+                                <div class="card status-current">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><?= $event['event_title'] ?></h5>
+                                        <span class="badge-status badge-current">Current</span>
+                                        <p class="card-text"><?= $event['event_desc'] ?></p>
+                                        <p class="mb-1 text-muted"><i class="bi bi-calendar-event"></i> <?= date('M d, Y', strtotime($event['event_date_start'])) ?> - <?= date('M d, Y', strtotime($event['event_date_end'])) ?></p>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        <?php endwhile; ?>
+                    </div>
+                <?php else: ?>
+                    <p class="text-muted mt-2">No current events.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Student Requests Table -->
+        <div class="card">
+            <div class="card-body">
+                <h5>My Pictorial Requests</h5>
+                <div class="table-responsive mt-3">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-light">
                             <tr>
-                                <td colspan="5" class="text-center text-muted">No requests submitted yet.</td>
+                                <th>#</th>
+                                <th>Request Date</th>
+                                <th>Status</th>
+
                             </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-<?php endif;
-?>
+                        </thead>
+                        <tbody>
 
-
-<?php 
-if($_SESSION['role'] == 'admin' || $_SESSION['role'] == 'staff'):
-?>
-    <h3 class="fw-bold text-primary mb-4">Admin Dashboard</h3>
-
-    <!-- Current & Ongoing Events -->
-    <div class="card">
-        <div class="card-body">
-            <h5>Current & Ongoing Events</h5>
-            <?php if($events->num_rows > 0): ?>
-                <div class="row g-3 mt-2">
-                    <?php while($event = $events->fetch_assoc()): ?>
-                          <a style="text-decoration: none;cursor: pointer;"  <?php if ($_SESSION['role']=='admin' || $_SESSION['role']=='staff') { ?>
-       href="?page=participant_list&event_id=<?= $event['event_id'] ?>"
-   <?php } ?> class="col-md-4">
-            <div class="card status-current">
-                <div class="card-body">
-                    <h5 class="card-title"><?=  $event['event_title'] ?></h5>
-                    <span class="badge-status badge-current">Current</span>
-                    <p class="card-text"><?=  $event['event_desc'] ?></p>
-                     <p class="mb-1 text-muted"><i class="bi bi-calendar-event"></i> <?= date('M d, Y', strtotime($event['event_date_start'])) ?> - <?= date('M d, Y', strtotime($event['event_date_end'])) ?></p>
-                
-                </div>
-            </div>
-</a>
-                    
-                    <?php endwhile; ?>
-                </div>
-            <?php else: ?>
-                <p class="text-muted mt-2">No current events.</p>
-            <?php endif; ?>
-        </div>
-    </div>
-
-    <!-- Student Requests Table -->
-    <div class="card">
-        <div class="card-body">
-            <h5>Students Pictorial Requests</h5>
-            <div class="table-responsive mt-3">
-                <table class="table table-bordered table-striped">
-                    <thead class="table-light">
-                        <tr>
-                            <th>#</th>
-                            <th>Student Name</th>
-                            <th>Schedule Date</th>                          
-                            <th>Status</th>
-     
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if($requests->num_rows > 0): ?>
-                            <?php $i=1; while($req = $requests->fetch_assoc()): ?>
+                            <?php $i = 1;
+                            while ($req = $requests->fetch_assoc()): ?>
                                 <tr>
                                     <td><?= $i++ ?></td>
-                                    <td><?=$req['firstname']." ".$req['middlename']." ".$req['lastname']?></td>
                                     <td><?= date('M d, Y', strtotime($req['request_date'])) ?></td>
-                                    
                                     <td class="fw-bold
-                                        <?= $req['status']=='Approved' ? 'status-approved' : ($req['status']=='Rejected' ? 'status-rejected' : 'status-pending') ?>">
+                                        <?= $req['status'] == 'Approved' ? 'status-approved' : ($req['status'] == 'Rejected' ? 'status-rejected' : 'status-pending') ?>">
                                         <?= $req['status'] ?>
                                     </td>
-                           
+
                                 </tr>
                             <?php endwhile; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="5" class="text-center text-muted">No requests submitted yet.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-<?php endif;
-?>
+    <?php endif;
+    ?>
+
+
+    <?php
+    if ($_SESSION['role'] == 'admin' || $_SESSION['role'] == 'staff'):
+    ?>
+        <h3 class="fw-bold text-primary mb-4"><?= (ucwords($_SESSION['role']) == "Staff") ? "Registar" : ucwords($_SESSION['role']) ?> Dashboard</h3>
+
+        <!-- Current & Ongoing Events -->
+        <div class="card">
+            <div class="card-body">
+                <h5>Current & Ongoing Events</h5>
+                <?php if ($events->num_rows > 0): ?>
+                    <div class="row g-3 mt-2">
+                        <?php while ($event = $events->fetch_assoc()): ?>
+                            <a style="text-decoration: none;cursor: pointer;" <?php if ($_SESSION['role'] == 'admin' || $_SESSION['role'] == 'staff') { ?>
+                                href="?page=participant_list&event_id=<?= $event['event_id'] ?>"
+                                <?php } ?> class="col-md-4">
+                                <div class="card status-current">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><?= $event['event_title'] ?></h5>
+                                        <span class="badge-status badge-current">Current</span>
+                                        <p class="card-text"><?= $event['event_desc'] ?></p>
+                                        <p class="mb-1 text-muted"><i class="bi bi-calendar-event"></i> <?= date('M d, Y', strtotime($event['event_date_start'])) ?> - <?= date('M d, Y', strtotime($event['event_date_end'])) ?></p>
+
+                                    </div>
+                                </div>
+                            </a>
+
+                        <?php endwhile; ?>
+                    </div>
+                <?php else: ?>
+                    <p class="text-muted mt-2">No current events.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Student Requests Table -->
+        <div class="card">
+            <div class="card-body">
+                <h5>Students Pictorial Requests</h5>
+                <div class="table-responsive mt-3">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Student Name</th>
+                                <th>Schedule Date</th>
+                                <th>Status</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <?php $i = 1;
+                            while ($req = $requests->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?= $i++ ?></td>
+                                    <td><?= $req['firstname'] . " " . $req['middlename'] . " " . $req['lastname'] ?></td>
+                                    <td><?= date('M d, Y', strtotime($req['request_date'])) ?></td>
+
+                                    <td class="fw-bold
+                                        <?= $req['status'] == 'Approved' ? 'status-approved' : ($req['status'] == 'Rejected' ? 'status-rejected' : 'status-pending') ?>">
+                                        <?= $req['status'] ?>
+                                    </td>
+
+                                </tr>
+                            <?php endwhile; ?>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <?php endif;
+    ?>
 
 </div>
 <script>

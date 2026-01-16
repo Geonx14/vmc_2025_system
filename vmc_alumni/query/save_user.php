@@ -11,8 +11,10 @@ $username = mysqli_real_escape_string($conn, trim($username));
 $password = mysqli_real_escape_string($conn, trim($password));
 $user_type = mysqli_real_escape_string($conn, trim($user_type));
 $mobile = mysqli_real_escape_string($conn, trim($mobile));
+$status = $status ?? '0';
 $year_graduated = isset($year_graduated) ? mysqli_real_escape_string($conn, trim($year_graduated)) : '';
 $avatar_file = "";
+
 
 // Handle Avatar Upload (if uploaded)
 if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === 0) {
@@ -30,10 +32,10 @@ if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === 0) {
 }
 $student_course_exists = $conn->query("SELECT * FROM st_course where student_id='$user_id'");
 
-if($student_course_exists->num_rows > 0){
-    if($user_type == 'student' || $user_type == 'alumni'){
-      $conn->query("update st_course set course='$course',year_graduated = '$year_graduated' where student_id='$user_id'");
-    } 
+if ($student_course_exists->num_rows > 0) {
+    if ($user_type == 'student' || $user_type == 'alumni') {
+        $conn->query("update st_course set course='$course',year_graduated = '$year_graduated' where student_id='$user_id'");
+    }
 }
 
 if (isset($user_id) && !empty($user_id)) {
@@ -63,28 +65,25 @@ if (isset($user_id) && !empty($user_id)) {
     } else {
         echo "0";
     }
-
-}
-else{
-$check_username_query = $conn->query("SELECT * FROM users WHERE username='$username'");
-if ($check_username_query->num_rows > 0) {
-    echo "3";
-    exit;
-}
-// INSERT new user
-$insert = $conn->query("
-    INSERT INTO users (firstname, middlename, lastname, birthday, username, password, avatar, user_type, mobile, date_created)
-    VALUES ('$firstname', '$middlename', '$lastname', '$birthday', '$username', '$password', '$avatar_file', '$user_type', '$mobile', NOW())
-");
-$inserted_user_id = $conn->insert_id;
-
-if ($insert) {
-     if($user_type == 'student' || $user_type == 'alumni'){
-        $conn->query("insert into st_course (student_id, course,year_graduated) values ('$inserted_user_id', '$course','$year_graduated')");
-    }
-    echo "1";
 } else {
-    echo "0";
+    $check_username_query = $conn->query("SELECT * FROM users WHERE username='$username'");
+    if ($check_username_query->num_rows > 0) {
+        echo "3";
+        exit;
+    }
+    // INSERT new user
+    $insert = $conn->query("
+    INSERT INTO users (firstname, middlename, lastname, birthday, username, password, avatar, user_type, mobile, date_created, status)
+    VALUES ('$firstname', '$middlename', '$lastname', '$birthday', '$username', '$password', '$avatar_file', '$user_type', '$mobile', NOW(), '$status')
+");
+    $inserted_user_id = $conn->insert_id;
+
+    if ($insert) {
+        if ($user_type == 'student' || $user_type == 'alumni') {
+            $conn->query("insert into st_course (student_id, course,year_graduated) values ('$inserted_user_id', '$course','$year_graduated')");
+        }
+        echo "1";
+    } else {
+        echo "0";
+    }
 }
-}
-?>

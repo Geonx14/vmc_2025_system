@@ -11,7 +11,7 @@
         background: #ffffff;
         border-radius: 12px;
         padding: 25px;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
     }
 
     .btn-add {
@@ -21,7 +21,9 @@
         padding: 8px 14px;
     }
 
-    .btn-add:hover { background: #0f56b3; }
+    .btn-add:hover {
+        background: #0f56b3;
+    }
 
     .table thead {
         background: #f0f2f5;
@@ -32,9 +34,13 @@
         color: #555;
     }
 
-    .modal-content { border-radius: 14px; }
+    .modal-content {
+        border-radius: 14px;
+    }
 
-    label { font-weight: 500; }
+    label {
+        font-weight: 500;
+    }
 </style>
 
 <div class="content-box">
@@ -43,6 +49,32 @@
         <h3 class="fw-bold text-primary m-0">Manage Alumni</h3>
 
         <button class="btn btn-add" id="btnAddStudent">+ New Alumni</button>
+    </div>
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <label class="fw-semibold">Filter by Status</label>
+            <select id="filterStatus" class="form-control">
+                <option value="">All</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Pending">Pending</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="fw-semibold">Filter by Batch</label>
+            <select id="filterBatch" class="form-control">
+                <option value="">All</option>
+                <?php
+                //2025-2026
+                $selected_batch = isset($_GET['batch']) ? $_GET['batch'] : '';
+                for ($year = date('Y'); $year >= 2000; $year--) {
+                    $next_year = $year + 1;
+                    $batch = $year . '-' . $next_year;
+                    echo "<option value='$batch'" . ($selected_batch == $batch ? " selected" : "") . ">$batch</option>";
+                }
+                ?>
+            </select>
+        </div>
     </div>
 
     <div class="table-responsive">
@@ -56,10 +88,12 @@
                     <th>Last Name</th>
                     <th>Birthday</th>
                     <th>Course</th>
-                    <th>Year Graduated</th>
+                    <th>Batch</th>
                     <th>Mobile</th>
                     <th>Username</th>
                     <th>Password</th>
+                    <th>Status 1</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -75,33 +109,40 @@
 
                 while ($row = $students->fetch_assoc()):
                 ?>
-                <tr>
-                    <td class="s-id"><?= $row['user_id'] ?></td>
+                    <tr>
+                        <td class="s-id"><?= $row['user_id'] ?></td>
 
-                    <td class="s-avatar">
-                        <?php if ($row['avatar']): ?>
-                            <img src="query/uploads/avatars/<?= $row['avatar'] ?>" width="40" height="40" style="border-radius:50%;">
-                        <?php endif; ?>
-                    </td>
+                        <td class="s-avatar">
+                            <?php if ($row['avatar']): ?>
+                                <img src="query/uploads/avatars/<?= $row['avatar'] ?>" width="40" height="40" style="border-radius:50%;">
+                            <?php endif; ?>
+                        </td>
 
-                    <td class="s-firstname"><?= $row['firstname'] ?></td>
-                    <td class="s-middlename"><?= $row['middlename'] ?></td>
-                    <td class="s-lastname"><?= $row['lastname'] ?></td>
-                    <td class="s-birthday"><?= $row['birthday'] ?></td>
+                        <td class="s-firstname"><?= $row['firstname'] ?></td>
+                        <td class="s-middlename"><?= $row['middlename'] ?></td>
+                        <td class="s-lastname"><?= $row['lastname'] ?></td>
+                        <td class="s-birthday"><?= $row['birthday'] ?></td>
 
-                    <td class="s-course"><?= $row['course'] ?></td>
-                    <td class="s-year_graduated"><?= $row['year_graduated'] ?></td>
-                    <td class="s-contact"><?= $row['mobile'] ?></td>
-                    <td class="s-username"><?= $row['username'] ?></td>
-                    <td class="s-password"><?= $row['password'] ?></td>
+                        <td class="s-course"><?= $row['course'] ?></td>
+                        <td class="s-year_graduated"><?= $row['year_graduated'] ?></td>
+                        <td class="s-contact"><?= $row['mobile'] ?></td>
+                        <td class="s-username"><?= $row['username'] ?></td>
+                        <td class="s-password"><?= $row['password'] ?></td>
+                        <td><?= $row['status'] == 0 ? 'Pending' : ($row['status'] == 1 ? 'Approved' : 'Rejected')    ?></td>
 
-                    <td>
-                        <button class="btn btn-primary btn-sm btnEdit">Edit</button>
-                        <a href="?page=manage_alumni_info&id=<?= $row['user_id'] ?>" class="btn btn-info btn-sm btnUpdate" >Update Profile</a>
-                        <button class="btn btn-danger btn-sm btnDelete" data-id="<?= $row['user_id'] ?>">Delete</button>
-                         
-                    </td>
-                </tr>
+                        <td class="s-status">
+                            <select class="form-control status-dropdown" data-id="<?= $row['user_id'] ?>">
+                                <option value="0" <?= $row['status'] == '0' ? 'selected' : '' ?>>Pending</option>
+                                <option value="1" <?= $row['status'] == '1' ? 'selected' : '' ?>>Approved</option>
+                                <option value="2" <?= $row['status'] == '2' ? 'selected' : '' ?>>Rejected</option>
+                            </select>
+                        <td>
+                            <button class="btn btn-primary btn-sm btnEdit">Edit</button>
+                            <a href="?page=manage_alumni_info&id=<?= $row['user_id'] ?>" class="btn btn-info btn-sm btnUpdate">Update Profile</a>
+                            <button class="btn btn-danger btn-sm btnDelete" data-id="<?= $row['user_id'] ?>">Delete</button>
+
+                        </td>
+                    </tr>
                 <?php endwhile; ?>
             </tbody>
         </table>
@@ -123,8 +164,8 @@
 
                     <input type="hidden" id="user_id" name="user_id">
 
-                      <input type="hidden" id="user_type" name="user_type" value="alumni">
-
+                    <input type="hidden" id="user_type" name="user_type" value="alumni">
+                    <input type="hidden" name="status" value="1">
                     <div class="row g-3">
 
                         <div class="col-md-4">
@@ -198,9 +239,18 @@
                                 </optgroup>
                             </select>
                         </div>
-                          <div class="col-md-6">
-                            <label>Year Graduated</label>
-                            <input type="number" id="year_graduated" name="year_graduated" class="form-control">
+                        <div class="col-md-6">
+                            <label>Batch</label>
+                            <select id="year_graduated" name="year_graduated" class="form-control">
+                                <option value="" disabled>Select Batch</option>
+                                <?php
+                                for ($year = date('Y'); $year >= 2000; $year--) {
+                                    $next_year = $year + 1;
+                                    $batch = $year . '-' . $next_year;
+                                    echo "<option value='$batch'>$batch</option>";
+                                }
+                                ?>
+                            </select>
                         </div>
                         <div class="col-md-6">
                             <label>Mobile</label>
@@ -237,74 +287,106 @@
 
 
 <script>
-
-// Initialize DataTable safely
-$(document).ready(function(){
-    $('#studentTable').DataTable({
-        "pageLength": 10
-    });
-});
-
-// Add Student
-$("#btnAddStudent").on("click", function(){
-    $("#studentForm")[0].reset();
-    $("#modalTitle").text("Add New Student");
-    $("#user_id").val("");
-    new bootstrap.Modal(document.getElementById("studentModal")).show();
-});
-
-// Edit Student
-$(".btnEdit").on("click", function(){
-    let row = $(this).closest("tr");
-
-    $("#modalTitle").text("Edit Student");
-
-    $("#user_id").val(row.find(".s-id").text());
-    $("#firstname").val(row.find(".s-firstname").text());
-    $("#middlename").val(row.find(".s-middlename").text());
-    $("#lastname").val(row.find(".s-lastname").text());
-    $("#birthday").val(row.find(".s-birthday").text());
-    $("#course").val(row.find(".s-course").text());
-    $("#mobile").val(row.find(".s-contact").text());
-    $("#username").val(row.find(".s-username").text());
-    $("#password").val(row.find(".s-password").text());
- $("#year_graduated").val(row.find(".s-year_graduated").text());
-    new bootstrap.Modal(document.getElementById("studentModal")).show();
-});
-
-// Submit form (SAMPLE ONLY – NO AJAX)
-$("#studentForm").on("submit", function(e){
-    e.preventDefault();
-
- $.ajax({
-    url: 'query/save_user.php',
-    type: 'POST',
-    data: new FormData(this),
-    contentType: false,
-    processData: false,
-    success: function(response){
-        
-        alert('Student saved successfully!'+response);
-        location.reload(); // Reload the page to see changes
-    },
- })
-
-    // Hide modal properly
-
-});
-$(".btnDelete").on("click", function(){
-    let delete_id = $(this).data('id');
-    if(confirm("Are you sure you want to delete this student?")){
-        $.ajax({
-            url: 'query/delete_user.php',
-            type: 'POST',
-            data: { delete_id: delete_id },
-            success: function(response){
-                alert('Student deleted successfully!');
-                location.reload(); // Reload the page to see changes
-            },
+    // Initialize DataTable safely
+    $(document).ready(function() {
+        var table = $('#studentTable').DataTable({
+            "pageLength": 10
         });
-    }
-});
 
+        $("#filterStatus").on("change", function() {
+            table.column(11).search(this.value).draw();
+        });
+        $("#filterBatch").on("change", function() {
+            table.column(7).search(this.value).draw();
+        });
+    });
+
+    $(".status-dropdown").on("change", function() {
+        let user_id = $(this).data('id');
+        let status = $(this).val();
+
+        $.ajax({
+            url: 'query/verify_user.php',
+            type: 'POST',
+            data: {
+                user_id: user_id,
+                status: status
+            },
+            success: function(response) {
+                if (response.trim() === '1') {
+                    alert('User status updated successfully!' + response);
+                } else {
+                    alert('Failed to update user status.' + response);
+                }
+            },
+            error: function() {
+                alert('An error occurred while updating user status.');
+            }
+        });
+    });
+
+    // Add Student
+    $("#btnAddStudent").on("click", function() {
+        $("#studentForm")[0].reset();
+        $("#modalTitle").text("Add New Student");
+        $("#user_id").val("");
+        $("#year_graduated").val($("#filterBatch").val());
+        new bootstrap.Modal(document.getElementById("studentModal")).show();
+    });
+
+    // Edit Student
+    $(".btnEdit").on("click", function() {
+        let row = $(this).closest("tr");
+
+        $("#modalTitle").text("Edit Student");
+
+        $("#user_id").val(row.find(".s-id").text());
+        $("#firstname").val(row.find(".s-firstname").text());
+        $("#middlename").val(row.find(".s-middlename").text());
+        $("#lastname").val(row.find(".s-lastname").text());
+        $("#birthday").val(row.find(".s-birthday").text());
+        $("#course").val(row.find(".s-course").text());
+        $("#mobile").val(row.find(".s-contact").text());
+        $("#username").val(row.find(".s-username").text());
+        $("#password").val(row.find(".s-password").text());
+        $("#year_graduated").val(row.find(".s-year_graduated").text());
+        new bootstrap.Modal(document.getElementById("studentModal")).show();
+    });
+
+    // Submit form (SAMPLE ONLY – NO AJAX)
+    $("#studentForm").on("submit", function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: 'query/save_user.php',
+            type: 'POST',
+            data: new FormData(this),
+            contentType: false,
+            processData: false,
+            success: function(response) {
+
+                alert('Student saved successfully!' + response);
+                location.href = "index.php?page=alumni&batch=" + $("#year_graduated").val(); // Reload the page to see changes
+            },
+        })
+
+        // Hide modal properly
+
+    });
+    $(".btnDelete").on("click", function() {
+        let delete_id = $(this).data('id');
+        if (confirm("Are you sure you want to delete this student?")) {
+            $.ajax({
+                url: 'query/delete_user.php',
+                type: 'POST',
+                data: {
+                    delete_id: delete_id
+                },
+                success: function(response) {
+                    alert('Student deleted successfully!');
+                    location.reload(); // Reload the page to see changes
+                },
+            });
+        }
+    });
 </script>

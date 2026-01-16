@@ -1,170 +1,231 @@
 <?php
 include 'connection.php';
 ?>
-<style>
-body {
-    background: #f5f6fa;
-    font-family: "Segoe UI", sans-serif;
-    padding: 20px;
-}
+<!DOCTYPE html>
+<html lang="en">
 
-.content-box {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-}
+<head>
+    <meta charset="UTF-8">
+    <title>Alumni Records</title>
 
-.table thead {
-    background: #f0f2f5;
-}
+    <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-.table thead th {
-    font-weight: 600;
-    color: #555;
-}
+    <!-- DATATABLES -->
+    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
-input.search-box, select.filter-course {
-    border-radius: 10px;
-    padding: 5px 10px;
-    margin-right: 10px;
-}
-</style>
+    <style>
+        body {
+            background: #f5f6fa;
+            font-family: "Segoe UI", sans-serif;
+            padding: 20px;
+        }
 
-<div class="content-box">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold text-primary m-0">Alumni Records</h3>
-    </div>
+        .content-box {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+        }
 
-    <div class="d-flex mb-3">
-       
-        <select id="filterCourse" class="filter-course">
-            <option value="">All Courses</option>
-          
-                                <optgroup label="Information Technology & Computing">
-                                    <option value="BSIT">BS Information Technology (BSIT)</option>
-                                    <option value="BSCS">BS Computer Science (BSCS)</option>
-                                    <option value="BSCpE">BS Computer Engineering (BSCpE)</option>
-                                    <option value="BSIS">BS Information Systems (BSIS)</option>
-                                </optgroup>
+        .table thead {
+            background: #f0f2f5;
+        }
 
-                                <optgroup label="Business & Management">
-                                    <option value="BSBA">BS Business Administration (BSBA)</option>
-                                    <option value="BSA">BS Accountancy (BSA)</option>
-                                    <option value="BSMA">BS Management Accounting (BSMA)</option>
-                                    <option value="BSTM">BS Tourism Management (BSTM)</option>
-                                    <option value="BHM">BS Hospitality Management (BHM)</option>
-                                </optgroup>
+        .table thead th {
+            font-weight: 600;
+            color: #555;
+        }
 
-                                <optgroup label="Education">
-                                    <option value="BEEd">Bachelor of Elementary Education (BEEd)</option>
-                                    <option value="BSEd-English">BSEd Major in English</option>
-                                    <option value="BSEd-Math">BSEd Major in Mathematics</option>
-                                    <option value="BPEd">Bachelor of Physical Education (BPEd)</option>
-                                </optgroup>
+        .filter-course {
+            border-radius: 10px;
+            padding: 5px 10px;
+            margin-right: 10px;
+        }
 
-                                <optgroup label="Engineering">
-                                    <option value="BSCE">BS Civil Engineering (BSCE)</option>
-                                    <option value="BSEE">BS Electrical Engineering (BSEE)</option>
-                                    <option value="BSME">BS Mechanical Engineering (BSME)</option>
-                                    <option value="BSECE">BS Electronics Engineering (BSECE)</option>
-                                </optgroup>
+        /* PRINT STYLES */
+        .print-title {
+            display: none;
+        }
 
-                                <optgroup label="Health & Allied Programs">
-                                    <option value="BSN">BS Nursing (BSN)</option>
-                                    <option value="BSP">BS Pharmacy (BSP)</option>
-                                    <option value="BSMT">BS Medical Technology (BSMT)</option>
-                                    <option value="BSPsych">BS Psychology (BS Psych)</option>
-                                </optgroup>
+        @media print {
+            body * {
+                visibility: hidden;
+            }
 
-                                <optgroup label="Public Safety">
-                                    <option value="BSCrim">BS Criminology (BSCrim)</option>
-                                </optgroup>
+            .print-title,
+            #alumniTable,
+            #alumniTable * {
+                visibility: visible;
+            }
 
-                                <optgroup label="Arts & Sciences">
-                                    <option value="BSPA">BS Public Administration</option>
-                                    <option value="ABComm">AB Communication</option>
-                                    <option value="ABPolSci">AB Political Science</option>
-                                </optgroup>
-        </select>
-    
-    </div>
+            .print-title {
+                display: block;
+                text-align: center;
+                margin-bottom: 15px;
+            }
 
-    <div class="table-responsive">
-        <table class="table table-hover table-bordered align-middle" id="alumniTable">
-             <thead class="table-light">
-                <tr>
-                    <th>ID</th>
-                    <th>Avatar</th>
-                    <th>Full Name</th>                   
-                    <th>Birthday</th>
-                    <th>Course</th>
-                    <th>Year Graduated</th>
-                  
-                    
-                </tr>
-            </thead>
+            #alumniTable {
+                position: absolute;
+                top: 50px;
+                left: 0;
+                width: 100%;
+            }
 
-            <tbody>
-                <?php
-                $students = $conn->query("
+            img {
+                display: none;
+            }
+
+            th,
+            td {
+                font-size: 12px;
+                padding: 6px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="content-box">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold text-primary m-0">Alumni Records</h3>
+            <button onclick="printTable()" class="btn btn-outline-primary">
+                🖨️ Print
+            </button>
+        </div>
+
+        <!-- FILTER -->
+        <div class="mb-3">
+            <select id="filterCourse" class="filter-course">
+                <option value="">All Courses</option>
+
+                <optgroup label="Information Technology & Computing">
+                    <option value="BSIT">BSIT</option>
+                    <option value="BSCS">BSCS</option>
+                    <option value="BSCpE">BSCpE</option>
+                    <option value="BSIS">BSIS</option>
+                </optgroup>
+
+                <optgroup label="Business & Management">
+                    <option value="BSBA">BSBA</option>
+                    <option value="BSA">BSA</option>
+                    <option value="BSMA">BSMA</option>
+                    <option value="BSTM">BSTM</option>
+                    <option value="BHM">BHM</option>
+                </optgroup>
+
+                <optgroup label="Education">
+                    <option value="BEEd">BEEd</option>
+                    <option value="BSEd-English">BSEd English</option>
+                    <option value="BSEd-Math">BSEd Math</option>
+                    <option value="BPEd">BPEd</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <!-- PRINT TITLE -->
+        <h4 class="print-title">Alumni Records</h4>
+
+        <!-- TABLE -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle" id="alumniTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Avatar</th>
+                        <th>Full Name</th>
+                        <th>Birthday</th>
+                        <th>Course</th>
+                        <th>Year Graduated</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <?php
+                    $students = $conn->query("
                     SELECT * FROM users u 
                     LEFT JOIN st_course c ON u.user_id = c.student_id 
                     WHERE user_type='alumni'
                     ORDER BY lastname ASC
                 ");
 
-                while ($row = $students->fetch_assoc()):
-                ?>
-                <tr>
-                    <td class="s-id"><?= $row['user_id'] ?></td>
-
-                    <td class="s-avatar">
-                        <?php if ($row['avatar']): ?>
-                            <img src="query/uploads/avatars/<?= $row['avatar'] ?>" width="40" height="40" style="border-radius:50%;">
-                        <?php endif; ?>
-                    </td>
-
-                    <td class="s-firstname"><?= $row['firstname']." ".$row['middlename']." ". $row['lastname'] ?></td>
-        
-                    <td class="s-birthday"><?= $row['birthday'] ?></td>
-
-                    <td class="s-course"><?= $row['course'] ?></td>
-                    <td class="s-year_graduated"><?= $row['year_graduated'] ?></td>
-                  
-                    
-                </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
+                    while ($row = $students->fetch_assoc()):
+                    ?>
+                        <tr>
+                            <td><?= $row['user_id'] ?></td>
+                            <td>
+                                <?php if ($row['avatar']): ?>
+                                    <img src="query/uploads/avatars/<?= $row['avatar'] ?>" width="40" height="40" style="border-radius:50%;">
+                                <?php endif; ?>
+                            </td>
+                            <td><?= $row['firstname'] . " " . $row['middlename'] . " " . $row['lastname'] ?></td>
+                            <td><?= $row['birthday'] ?></td>
+                            <td><?= $row['course'] ?></td>
+                            <td><?= $row['year_graduated'] ?></td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
+    <script>
+        function printTable() {
+            let table = document.getElementById("alumniTable").cloneNode(true);
 
-<script>
+            // Remove avatar column images
+            table.querySelectorAll("img").forEach(img => img.remove());
 
-    var table = $(".table").DataTable({
-        responsive: true,
-        pageLength: 10,
-        lengthChange: false
-    });
+            let printWindow = window.open("", "", "width=900,height=600");
 
-    $("#filterCourse").change(function(){
-  table.column(4).search(this.value).draw();
-    })
-// Search function
-document.getElementById("searchAlumni").addEventListener("keyup", function(){
-    let query = this.value.toLowerCase();
-    document.querySelectorAll("#alumniTable tbody tr").forEach(tr => {
-        tr.style.display = tr.textContent.toLowerCase().includes(query) ? "" : "none";
-    });
-});
+            printWindow.document.write(`
+        <html>
+        <head>
+            <title>Print Alumni Records</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 20px;
+                    color: #000;
+                }
+                h2 {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                th, td {
+                    border: 1px solid #000;
+                    padding: 6px;
+                    font-size: 12px;
+                    text-align: left;
+                }
+                th {
+                    background: #f2f2f2;
+                }
+            </style>
+        </head>
+        <body>
+            <h2>Alumni Records</h2>
+            ${table.outerHTML}
+        </body>
+        </html>
+    `);
 
-// Filter by course
-document.getElementById("btnFilter").addEventListener("click", function(){
-    let courseFilter = document.getElementById("filterCourse").value;
-    document.querySelectorAll("#alumniTable tbody tr").forEach(tr => {
-        let course = tr.cells[2].textContent;
-        tr.style.display = (courseFilter === "" || course === courseFilter) ? "" : "none";
-    });
-});
-</script>
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+        }
+    </script>
+
+
+</body>
+
+</html>
