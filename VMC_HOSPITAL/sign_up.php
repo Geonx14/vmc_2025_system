@@ -103,6 +103,9 @@
                 </div>
             </div>
             <input type="text" name="contact_number" class="form-control" placeholder="Contact Number" required>
+
+            <input type="email" name="email" class="form-control" placeholder="Email Address">
+
             <div class="row doctor-fields d-none">
                 <div class="col-md-12">
                     <input type="text" name="area_of_specialization" class="form-control" placeholder="Area of Specialization">
