@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>HosCheck Registration</title>
@@ -28,7 +29,7 @@
             background: var(--card-bg);
             padding: 40px 30px;
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 500px;
         }
@@ -39,7 +40,8 @@
             color: var(--text-primary);
         }
 
-        .form-control, .form-select {
+        .form-control,
+        .form-select {
             border-radius: 8px;
             padding: 10px;
             height: 45px;
@@ -77,10 +79,18 @@
         }
     </style>
 </head>
+
 <body>
     <div class="register-card">
         <h2>Create Account</h2>
-        <form id="frm_signup" >
+        <form id="frm_signup">
+
+            <select name="role" id="role" class="form-select" required>
+                <option value="">Select Role</option>
+                <option value="patient">Patient</option>
+                <option value="doctor">Doctor</option>
+
+            </select>
             <div class="row g-3">
                 <div class="col-md-4">
                     <input type="text" name="firstname" class="form-control" placeholder="First Name" required>
@@ -92,17 +102,30 @@
                     <input type="text" name="lastname" class="form-control" placeholder="Last Name" required>
                 </div>
             </div>
+            <input type="text" name="contact_number" class="form-control" placeholder="Contact Number" required>
+            <div class="row doctor-fields d-none">
+                <div class="col-md-12">
+                    <input type="text" name="area_of_specialization" class="form-control" placeholder="Area of Specialization">
+                </div>
+                <div class="col-md-12">
+                    <input type="text" name="license_number" class="form-control" placeholder="License Number">
+                </div>
 
+            </div>
+            <div class="row patient-fields d-none">
+                <div class="col-md-12">
+                    <input type="date" name="birthdate" class="form-control" placeholder="Birthdate">
+                </div>
+                <div class="col-md-12">
+                    <input type="text" name="guardians_name" class="form-control" placeholder="Guardian's Name">
+                </div>
+
+
+            </div>
             <input type="text" name="username" class="form-control" placeholder="Username" required>
             <input type="password" name="password" class="form-control" placeholder="Password" required>
-            <input type="text" name="contact_number" class="form-control" placeholder="Contact Number" required>
 
-            <select name="role" class="form-select" required>
-                <option value="">Select Role</option>
-                <option value="patient">Patient</option>
-                <option value="doctor">Doctor</option>
 
-            </select>
 
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
@@ -111,25 +134,40 @@
         </div>
     </div>
 </body>
+
 </html>
 
 <script>
-    $("#frm_signup").submit(function(e){
+    $("#role").change(function() {
+        var role = $(this).val();
+        if (role == "doctor") {
+            $(".doctor-fields").removeClass("d-none");
+            $(".patient-fields").addClass("d-none");
+        } else if (role == "patient") {
+            $(".patient-fields").removeClass("d-none");
+            $(".doctor-fields").addClass("d-none");
+        } else {
+            $(".doctor-fields").addClass("d-none");
+            $(".patient-fields").addClass("d-none");
+        }
+    });
+
+    $("#frm_signup").submit(function(e) {
         e.preventDefault();
         var formData = $(this).serialize();
         $.ajax({
             url: 'query/save_user.php',
             type: 'POST',
             data: formData,
-            success: function(response){
-                if(response.trim() == "1"){
+            success: function(response) {
+                if (response.trim() == "1") {
                     alert('Registration successful! You can now log in.');
                     window.location.href = 'login.php';
                 } else {
                     alert(response);
                 }
             },
-            error: function(){
+            error: function() {
                 alert('An error occurred while processing your request.');
             }
         });

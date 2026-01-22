@@ -1,6 +1,6 @@
 <?php
 include 'connection.php';
-$user = $conn->query("SELECT * FROM users WHERE user_id = ".$_SESSION['user_id'])->fetch_assoc();
+$user = $conn->query("SELECT * FROM users WHERE user_id = " . $_SESSION['user_id'])->fetch_assoc();
 
 ?>
 <div class="container-fluid py-4">
@@ -27,15 +27,45 @@ $user = $conn->query("SELECT * FROM users WHERE user_id = ".$_SESSION['user_id']
                         <label class="form-label">Last Name</label>
                         <input type="text" name="lastname" class="form-control" value="<?= $user['lastname'] ?? '' ?>" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label ">Email</label>
+                        <input type="email" name="email" class="form-control" value="<?= $user['email'] ?? '' ?>" required>
+                    </div>
+
+                    <?php if ($user['role'] == 'patient'): ?>
+
+                        <div class="mb-3">
+                            <label class="form-label">Birthday</label>
+                            <input type="text" name="birthdate" class="form-control" value="<?= $user['birthdate'] ?? '' ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Guardian's Name</label>
+                            <input type="text" name="guardians_name" class="form-control" value="<?= $user['guardians_name'] ?? '' ?>" required>
+                        </div>
+                    <?php endif; ?>
+                    <div class="mb-3">
+                        <label class="form-label">Contact Number</label>
+                        <input type="text" name="contact_number" class="form-control" value="<?= $user['contact_number'] ?? '' ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="address" class="form-control" value="<?= $user['address'] ?? '' ?>" required>
+                    </div>
+                    <?php if ($user['role'] == 'doctor'): ?>
+                        <div class="mb-3">
+                            <label class="form-label">Address of Specialization</label>
+                            <input type="text" name="area_of_specialization" class="form-control" value="<?= $user['area_of_specialization'] ?? '' ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">License Number</label>
+                            <input type="text" name="license_number" class="form-control" value="<?= $user['license_number'] ?? '' ?>" required>
+                        </div>
+                    <?php endif; ?>
+
 
                     <div class="mb-3">
                         <label class="form-label">Username</label>
                         <input type="text" name="username" class="form-control" value="<?= $user['username'] ?? '' ?>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Contact Number</label>
-                        <input type="text" name="contact_number" class="form-control" value="<?= $user['contact_number'] ?? '' ?>" required>
                     </div>
 
                     <div class="mb-3">
@@ -53,35 +83,33 @@ $user = $conn->query("SELECT * FROM users WHERE user_id = ".$_SESSION['user_id']
 <style>
     .card {
         border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 </style>
 
 <script>
-$(document).ready(function(){
-    $('#frm_profile').submit(function(e){
-        e.preventDefault();
-        $.ajax({
-            url: 'query/update_profile.php', // backend PHP to handle profile update
-            method: 'POST',
-            data: $(this).serialize(),
-            success: function(resp){              
-                if(resp == '1'){
-                    alert('Profile updated successfully.');
-                  location.reload(); // reload to refresh session data
+    $(document).ready(function() {
+        $('#frm_profile').submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: 'query/update_profile.php', // backend PHP to handle profile update
+                method: 'POST',
+                data: $(this).serialize(),
+                success: function(resp) {
+                    if (resp == '1') {
+                        alert('Profile updated successfully.');
+                        location.reload(); // reload to refresh session data
+                    } else if (resp == '2') {
+                        alert('Username already taken. Please choose another.');
+                    } else {
+                        alert(resp || 'Error updating profile.');
+                    }
+                },
+                error: function(err) {
+                    console.log(err);
+                    alert('An error occurred.');
                 }
-               else if(resp == '2'){
-                    alert('Username already taken. Please choose another.');
-                }
-                else {
-                    alert(resp || 'Error updating profile.');
-                }
-            },
-            error: function(err){
-                console.log(err);
-                alert('An error occurred.');
-            }
+            });
         });
     });
-});
 </script>
