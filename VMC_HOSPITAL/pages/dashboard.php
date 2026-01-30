@@ -119,7 +119,7 @@ $total_doctors = $conn->query("SELECT * FROM users WHERE role='doctor'")->num_ro
                             <th>Doctor Name</th>
                             <th>Time</th>
                             <th>Status</th>
-                            <th>Fee</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -141,7 +141,7 @@ $total_doctors = $conn->query("SELECT * FROM users WHERE role='doctor'")->num_ro
                                     ?>
                                     <span class="badge bg-<?= $status_badge ?>"><?= ucfirst($row['status']) ?></span>
                                 </td>
-                                <td>P<?= number_format($row['professional_fee'], 2) ?></td>
+
                             <?php endwhile; ?>
                             </tr>
                     </tbody>
